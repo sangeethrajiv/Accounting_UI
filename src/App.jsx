@@ -14,6 +14,7 @@ import {
 import AccountingSettingsView from './components/AccountingSettingsView.jsx';
 import InvoiceCreateModal from './components/InvoiceCreateModal.jsx';
 import PaymentCreateModal from './components/PaymentCreateModal.jsx';
+import InvoiceFormView from './components/InvoiceFormView.jsx';
 
 // --- SAUDI GROUP COMPANIES (1 PARENT HQ + 5 OPERATING COMPANIES) ---
 const COMPANIES = [
@@ -161,27 +162,55 @@ const INITIAL_INVOICES = [
   {
     id: 'INV-3',
     number: 'INV/2026/00011',
-    proformaRef: 'PRO/2026/00003',
-    customerEn: 'Al-Futtaim Saudi Contracting',
-    customerAr: 'شركة الفطيم للمقاولات السعودية',
+    proformaRef: '',
+    customerEn: '44 Supermarket',
+    customerAr: 'سوبرماركت 44',
     vatNo: '300112233400003',
-    invoiceDate: 'Oct 30',
-    forceDate: '2026-10-30',
-    dueDateText: 'Today',
-    dueDateType: 'warning',
-    taxExcluded: 18000.00,
-    total: 20700.00,
-    amountDue: 20700.00,
+    invoiceDate: '06/03/2026',
+    invoiceDateTime: '06/03/2026 12:46:33',
+    forceDate: '2026-03-06',
+    dueDateText: '06/03/2026',
+    dueDateType: 'normal',
+    taxExcluded: 975.00,
+    total: 1121.25,
+    amountDue: 1121.25,
     currency: 'SAR',
     zatcaStatus: 'CLEARED (QR)',
-    status: 'Sent',
+    status: 'Draft',
     invoiceSubtype: 'cash',
     subtypeLabelEn: 'Cash Invoice',
     subtypeLabelAr: 'فاتورة نقدية',
     companyId: 'HYD',
     companyName: 'Al Yamama Hydraulic Workshop Co.',
+    isSubscription: true,
+    salesperson: 'Adithya PL',
+    groupTask: 'No Grouping',
+    companySeal: true,
+    showOutStock: false,
+    salesTeam: 'Sales',
     lines: [
-      { id: 1, descEn: 'Hydraulic Pump Bench Testing & Pressure Cert', descAr: 'فحص ومعايرة مضخة هيدروليكية وإصدار شهادة', analytic: 'CC-101 Workshop Ops', qty: 3, price: 6000, tax: 15 }
+      {
+        id: 1,
+        task: 'Subscription',
+        category: 'Subscription',
+        showSeparately: false,
+        showLine: false,
+        mainQuantityCheck: false,
+        partnerType: 'FAY',
+        subType: 'Annual Service Subscription - 1 Year',
+        product: 'Annual Service Subscription - 1 Year',
+        descEn: 'Annual Service Subscription (Renewal)',
+        descAr: 'اشتراك صيانة سنوي (تجديد)',
+        account: '479104 Revenue (Renewal)',
+        analytic: 'CC-101 Workshop Ops',
+        mainQty: 0.0,
+        qty: 3,
+        uom: 'Units',
+        price: 325,
+        tax: 15,
+        discount: 0.0,
+        roundingRequired: false,
+      }
     ]
   },
   {
@@ -500,6 +529,75 @@ export default function App() {
     () => COMPANIES.find((c) => c.id === primaryCompanyId) || COMPANIES[0],
     [primaryCompanyId]
   );
+
+  // Create New Invoice draft in Odoo Form View
+  const handleCreateNewInvoice = (subtype = 'cash') => {
+    const newInv = {
+      id: `INV-${Date.now()}`,
+      number: 'Draft Invoice',
+      proformaRef: '',
+      customerEn: '44 Supermarket',
+      customerAr: 'سوبرماركت 44',
+      vatNo: '300112233400003',
+      invoiceDate: '06/03/2026',
+      invoiceDateTime: '06/03/2026 12:46:33',
+      forceDate: '2026-03-06',
+      dueDateText: '06/03/2026',
+      dueDateType: 'normal',
+      taxExcluded: 975.00,
+      total: 1121.25,
+      amountDue: 1121.25,
+      currency: 'SAR',
+      zatcaStatus: 'DRAFT (Phase 2)',
+      status: 'Draft',
+      type: 'customer',
+      invoiceSubtype: subtype,
+      subtypeLabelEn: subtype === 'cash' ? 'Cash Invoice' : 'Credit Invoice',
+      subtypeLabelAr: subtype === 'cash' ? 'فاتورة نقدية' : 'فاتورة آجل',
+      companyId: 'HYD',
+      companyName: 'Al Yamama Hydraulic Workshop Co.',
+      isSubscription: subtype === 'cash',
+      project: '',
+      contactPerson: '',
+      paymentTerms: subtype === 'cash' ? 'Immediate Payment' : '30 Days',
+      showDiscount: false,
+      vendorProjectName: '',
+      prNumber: '',
+      poNumber: '',
+      salesperson: 'Adithya PL',
+      equipmentDetails: '',
+      groupTask: 'No Grouping',
+      companySeal: true,
+      showOutStock: false,
+      salesTeam: 'Sales',
+      lines: [
+        {
+          id: Date.now(),
+          task: 'Subscription',
+          category: 'Subscription',
+          showSeparately: false,
+          showLine: false,
+          mainQuantityCheck: false,
+          partnerType: 'FAY',
+          subType: 'Annual Service Subscription - 1 Year',
+          product: 'Annual Service Subscription - 1 Year',
+          descEn: 'Annual Service Subscription (Renewal)',
+          descAr: 'اشتراك صيانة سنوي (تجديد)',
+          account: '479104 Revenue (Renewal)',
+          analytic: 'CC-101 Workshop Ops',
+          mainQty: 0.0,
+          qty: 3,
+          uom: 'Units',
+          price: 325,
+          tax: 15,
+          discount: 0.0,
+          roundingRequired: false,
+        }
+      ]
+    };
+    setSelectedInvoice(newInv);
+    setInvoiceCreateOpen(false);
+  };
 
   // Toggle Company Selection in Multi-Company Switcher (Odoo 13+ Checkbox behavior)
   const toggleCompanyCheckbox = (compId) => {
@@ -1109,6 +1207,7 @@ export default function App() {
                               onClick={() => {
                                 setActiveModule('accounting');
                                 setActiveView(group.view);
+                                if (group.view === 'invoices') setSelectedInvoice(null);
                                 if (group.chip) setActiveChips([group.chip]);
                                 if (group.report) setSelectedReportName(group.report);
                                 setOpenTopDropdown(null);
@@ -1131,6 +1230,7 @@ export default function App() {
                             onClick={() => {
                               setActiveModule('accounting');
                               setActiveView(item.view);
+                              if (item.view === 'invoices') setSelectedInvoice(null);
                               if (item.chip) setActiveChips([item.chip]);
                               setOpenTopDropdown(null);
                             }}
@@ -1228,7 +1328,8 @@ export default function App() {
           </div>
         </header>
 
-        {/* 2. SUB-HEADER ACTION, SEARCH & PAGINATION BAR */}
+        {/* 2. SUB-HEADER ACTION, SEARCH & PAGINATION BAR (Hidden when viewing an Invoice Form View) */}
+        {!(activeView === 'invoices' && selectedInvoice) && (
         <div className="bg-white border-b border-slate-200 px-6 py-3 flex flex-wrap items-center justify-between gap-4 shrink-0">
           {/* Left: New / Upload / Save / Discard Buttons + Active View Title */}
           <div className="flex items-center gap-2.5">
@@ -1264,6 +1365,9 @@ export default function App() {
                         if (activeView === 'bills') {
                           setInvoiceCreateType('vendor');
                           setInvoiceCreateOpen(true);
+                        } else if (activeView === 'invoices') {
+                          const isCash = activeChips.includes('Cash Invoices');
+                          handleCreateNewInvoice(isCash ? 'cash' : 'credit');
                         } else if (activeView === 'payments' || activeView === 'reconcile') {
                           const isVendorPay = activeChips.includes('Vendor Payments');
                           setPaymentCreateDefaults({
@@ -1275,8 +1379,7 @@ export default function App() {
                           });
                           setPaymentCreateOpen(true);
                         } else {
-                          setInvoiceCreateType('customer');
-                          setInvoiceCreateOpen(true);
+                          handleCreateNewInvoice('cash');
                         }
                       }}
                       className="px-3.5 py-1.5 rounded-md bg-blue-700 hover:bg-blue-800 text-white font-semibold text-xs shadow-xs transition"
@@ -1286,8 +1389,12 @@ export default function App() {
                     {(activeView === 'invoices' || activeView === 'bills') && (
                       <button
                         onClick={() => {
-                          setInvoiceCreateType(activeView === 'bills' ? 'vendor' : 'customer');
-                          setInvoiceCreateOpen(true);
+                          if (activeView === 'invoices') {
+                            handleCreateNewInvoice('proforma');
+                          } else {
+                            setInvoiceCreateType('vendor');
+                            setInvoiceCreateOpen(true);
+                          }
                         }}
                         className="px-3 py-1.5 rounded-md bg-white hover:bg-blue-50 text-blue-700 border border-blue-200 font-semibold text-xs transition"
                       >
@@ -1383,7 +1490,7 @@ export default function App() {
               <div className="flex items-center border border-slate-200 rounded-md overflow-hidden bg-white">
                 <button
                   onClick={() => setDisplayMode('list')}
-                  className={`p-1.5 ${displayMode === 'list' ? 'bg-blue-50 text-blue-700' : 'hover:bg-slate-50'}`}
+                  className={`p-1.5 ${displayMode === 'list' ? 'bg-blue-50 text-blue-700 font-bold' : 'hover:bg-slate-50 text-slate-600'}`}
                   title="List View"
                 >
                   <List className="w-3.5 h-3.5" />
@@ -1391,7 +1498,7 @@ export default function App() {
                 <button
                   onClick={() => setDisplayMode('kanban')}
                   className={`p-1.5 border-l border-slate-200 ${
-                    displayMode === 'kanban' ? 'bg-blue-50 text-blue-700' : 'hover:bg-slate-50'
+                    displayMode === 'kanban' ? 'bg-blue-50 text-blue-700 font-bold' : 'hover:bg-slate-50 text-slate-600'
                   }`}
                   title="Kanban View"
                 >
@@ -1401,6 +1508,7 @@ export default function App() {
             </div>
           )}
         </div>
+        )}
 
         {/* 3. SCROLLABLE WORKSPACE CONTENT */}
         <main className="flex-1 overflow-y-auto px-6 py-5 space-y-6">
@@ -1450,7 +1558,10 @@ export default function App() {
                     <div className="flex items-start justify-between gap-4">
                       <div className="space-y-2">
                         <button
-                          onClick={() => setSelectedInvoice(invoices[0])}
+                          onClick={() => {
+                            setInvoiceCreateType('customer');
+                            setInvoiceCreateOpen(true);
+                          }}
                           className="px-3.5 py-1.5 rounded-md bg-blue-700 hover:bg-blue-800 text-white text-xs font-semibold shadow-2xs"
                         >
                           {t('New', 'جديد')}
@@ -1458,21 +1569,30 @@ export default function App() {
                       </div>
                       <div className="text-xs space-y-1 text-end">
                         <div
-                          onClick={() => setActiveView('invoices')}
+                          onClick={() => {
+                            setActiveView('invoices');
+                            setSelectedInvoice(invoices[0]);
+                          }}
                           className="flex items-center justify-end gap-4 cursor-pointer hover:underline"
                         >
                           <span className="text-blue-700 font-medium">1 Proforma To Confirm</span>
                           <span className="font-semibold text-slate-800">SAR 166,750.00</span>
                         </div>
                         <div
-                          onClick={() => setActiveView('invoices')}
+                          onClick={() => {
+                            setActiveView('invoices');
+                            setSelectedInvoice(null);
+                          }}
                           className="flex items-center justify-end gap-4 cursor-pointer hover:underline"
                         >
                           <span className="text-blue-700 font-medium">14 Unpaid Invoices</span>
                           <span className="font-semibold text-slate-800">SAR 92,630.50</span>
                         </div>
                         <div
-                          onClick={() => setActiveView('invoices')}
+                          onClick={() => {
+                            setActiveView('invoices');
+                            setSelectedInvoice(null);
+                          }}
                           className="flex items-center justify-end gap-4 cursor-pointer hover:underline"
                         >
                           <span className="text-amber-600 font-medium">8 Late</span>
@@ -1715,8 +1835,8 @@ export default function App() {
                   <div className="my-4 grid grid-cols-2 gap-3 text-center">
                     <div
                       onClick={() => {
+                        setActiveView('invoices');
                         setSelectedInvoice(invoices[0]);
-                        setPrintPreviewMode('proforma');
                       }}
                       className="p-3 rounded-xl bg-slate-50 hover:bg-indigo-50 border border-slate-200 cursor-pointer transition"
                     >
@@ -1729,8 +1849,8 @@ export default function App() {
 
                     <div
                       onClick={() => {
+                        setActiveView('invoices');
                         setSelectedInvoice(invoices[1]);
-                        setPrintPreviewMode('zatca');
                       }}
                       className="p-3 rounded-xl bg-slate-50 hover:bg-blue-50 border border-slate-200 cursor-pointer transition"
                     >
@@ -1802,6 +1922,12 @@ export default function App() {
                           const target = MODULE_SUMMARIES[activeModule].targetAccountingView;
                           setActiveModule('accounting');
                           setActiveView(target);
+                          if (target === 'invoices') {
+                            const matched = invoices.find((inv) => inv.number === r.glRef || inv.proformaRef === r.glRef);
+                            if (matched) {
+                              setSelectedInvoice(matched);
+                            }
+                          }
                         }}
                         className="hover:bg-blue-50/40 cursor-pointer transition"
                       >
@@ -1827,9 +1953,48 @@ export default function App() {
           )}
 
           {/* ===============================================================
-              VIEW B: CUSTOMERS -> INVOICES & PROFORMA (SCREENSHOT 9 TABLE)
+              VIEW B: CUSTOMERS -> INVOICES & PROFORMA (ODOO FORM VIEW OR LIST)
              =============================================================== */}
           {activeView === 'invoices' && (
+            selectedInvoice ? (
+              <InvoiceFormView
+                invoice={selectedInvoice}
+                onBack={() => setSelectedInvoice(null)}
+                onSave={(saved) => {
+                  setInvoices((prev) => {
+                    const idx = prev.findIndex((inv) => inv.id === saved.id);
+                    if (idx >= 0) {
+                      const updated = [...prev];
+                      updated[idx] = saved;
+                      return updated;
+                    }
+                    return [saved, ...prev];
+                  });
+                  setSelectedInvoice(saved);
+                }}
+                onValidate={(validated) => {
+                  setInvoices((prev) =>
+                    prev.map((inv) => (inv.id === validated.id ? validated : inv))
+                  );
+                  setSelectedInvoice(validated);
+                }}
+                onRegisterPayment={(inv) => {
+                  setPaymentCreateDefaults({
+                    type: 'receive',
+                    partner: inv.customerEn,
+                    amount: inv.amountDue || inv.total,
+                    memo: `Payment for ${inv.number}`,
+                    invoiceId: inv.id,
+                  });
+                  setPaymentCreateOpen(true);
+                }}
+                onCreateNew={() => handleCreateNewInvoice(selectedInvoice.invoiceSubtype || 'cash')}
+                t={t}
+                isRtl={isRtl}
+                allInvoices={invoices}
+                onSelectInvoice={(inv) => setSelectedInvoice(inv)}
+              />
+            ) : (
             <div className="bg-white rounded-xl border border-slate-200 shadow-2xs overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full text-xs text-start">
@@ -1877,7 +2042,9 @@ export default function App() {
                       .map((inv) => (
                         <tr
                           key={inv.id}
-                          onClick={() => setSelectedInvoice(inv)}
+                          onClick={() => {
+                            setSelectedInvoice(inv);
+                          }}
                           className="hover:bg-blue-50/40 cursor-pointer transition"
                         >
                           <td className="py-3 px-4" onClick={(e) => e.stopPropagation()}>
@@ -1938,6 +2105,7 @@ export default function App() {
                 </table>
               </div>
             </div>
+            )
           )}
 
           {/* ===============================================================
@@ -2515,206 +2683,38 @@ export default function App() {
       )}
 
       {/* =====================================================================
-          MODAL 2: INVOICE / PROFORMA / ZATCA PHASE 2 FORM & PRINT MODAL
-         ===================================================================== */}
-      {selectedInvoice && (
-        <div
-          onClick={() => {
-            setSelectedInvoice(null);
-            setPrintPreviewMode(null);
-          }}
-          className="fixed inset-0 bg-slate-900/60 backdrop-blur-[1px] z-50 flex items-center justify-center p-4 overflow-y-auto"
-        >
-          <div
-            onClick={(e) => e.stopPropagation()}
-            className="bg-white rounded-xl max-w-4xl w-full shadow-2xl border border-slate-200 overflow-hidden my-8"
-          >
-            {/* Top Action Bar */}
-            <div className="bg-slate-50 px-6 py-3 border-b border-slate-200 flex flex-wrap items-center justify-between gap-2">
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => {
-                    const updated = { ...selectedInvoice, status: 'Proforma', zatcaStatus: 'Proforma (No XML)' };
-                    setSelectedInvoice(updated);
-                    setInvoices(invoices.map((i) => (i.id === updated.id ? updated : i)));
-                  }}
-                  className="px-3 py-1.5 rounded-md bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold"
-                >
-                  {t('Set as Proforma', 'تحويل لبروفرما')}
-                </button>
-                <button
-                  onClick={() => {
-                    const updated = { ...selectedInvoice, status: 'Posted', zatcaStatus: 'CLEARED (QR)' };
-                    setSelectedInvoice(updated);
-                    setInvoices(invoices.map((i) => (i.id === updated.id ? updated : i)));
-                  }}
-                  className="px-3 py-1.5 rounded-md bg-blue-700 hover:bg-blue-800 text-white text-xs font-semibold"
-                >
-                  {t('Validate & Clear ZATCA Phase 2', 'اعتماد وختم هيئة الزكاة')}
-                </button>
-                <button
-                  onClick={() => setPrintPreviewMode(printPreviewMode === 'proforma' ? null : 'proforma')}
-                  className="px-3 py-1.5 rounded-md bg-white border border-slate-300 text-slate-700 text-xs font-semibold flex items-center gap-1"
-                >
-                  <Printer className="w-3.5 h-3.5" />
-                  {t('Print Proforma', 'طباعة بروفرما')}
-                </button>
-                <button
-                  onClick={() => setPrintPreviewMode(printPreviewMode === 'zatca' ? null : 'zatca')}
-                  className="px-3 py-1.5 rounded-md bg-emerald-50 border border-emerald-300 text-emerald-800 text-xs font-semibold flex items-center gap-1"
-                >
-                  <QrCode className="w-3.5 h-3.5" />
-                  {t('ZATCA Tax Invoice QR', 'الفاتورة الضريبية ورمز QR')}
-                </button>
-                {selectedInvoice.status !== 'Paid' && (
-                  <button
-                    onClick={() => {
-                      setPaymentCreateDefaults({
-                        type: selectedInvoice.type === 'vendor' ? 'send' : 'receive',
-                        partner: selectedInvoice.customerEn,
-                        amount: selectedInvoice.amountDue || selectedInvoice.total,
-                        memo: `Payment for ${selectedInvoice.number}`,
-                        invoiceId: selectedInvoice.id,
-                      });
-                      setPaymentCreateOpen(true);
-                    }}
-                    className="px-3 py-1.5 rounded-md bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-semibold flex items-center gap-1.5 shadow-xs"
-                  >
-                    <CreditCard className="w-3.5 h-3.5" />
-                    <span>{t('Register Payment', 'تسجيل سداد')}</span>
-                  </button>
-                )}
-              </div>
-              <div className="flex items-center gap-2">
-                {renderStatusPill(selectedInvoice.status)}
-                <button
-                  onClick={() => {
-                    setSelectedInvoice(null);
-                    setPrintPreviewMode(null);
-                  }}
-                  className="p-1 rounded hover:bg-slate-200 text-slate-500"
-                >
-                  <X className="w-4 h-4" />
-                </button>
-              </div>
-            </div>
-
-            {/* Body: Form + Optional Bilingual Print Preview */}
-            <div className="p-6 space-y-5 text-xs">
-              <div className="flex flex-wrap items-start justify-between gap-4 border-b border-slate-100 pb-4">
-                <div>
-                  <span className="text-[11px] font-bold uppercase text-blue-700">
-                    {selectedInvoice.companyName}
-                  </span>
-                  <h2 className="text-2xl font-extrabold text-slate-900">{selectedInvoice.number}</h2>
-                  <p className="text-slate-500">
-                    Proforma Ref: <strong className="font-mono text-indigo-700">{selectedInvoice.proformaRef}</strong> • Customer VAT: <strong className="font-mono">{selectedInvoice.vatNo}</strong>
-                  </p>
-                </div>
-
-                {/* ZATCA Phase 2 Box */}
-                <div className="p-3 rounded-xl bg-blue-50 border border-blue-200 flex items-center gap-3">
-                  <QrCode className="w-12 h-12 text-slate-900 bg-white p-1 rounded border border-slate-200" />
-                  <div className="text-[11px] space-y-0.5">
-                    <div className="font-bold text-blue-950">ZATCA Fatoora Phase 2</div>
-                    <div className="font-mono text-slate-600">Status: {selectedInvoice.zatcaStatus}</div>
-                    <div className="font-mono text-slate-500">Force Date: {selectedInvoice.forceDate}</div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Optional Bilingual Print Banner when Print Proforma or ZATCA QR is toggled */}
-              {printPreviewMode && (
-                <div className="p-4 rounded-xl bg-slate-50 border-2 border-dashed border-blue-300 flex items-center justify-between">
-                  <div>
-                    <div className="text-xs font-extrabold text-blue-900 uppercase">
-                      {printPreviewMode === 'proforma'
-                        ? 'PROFORMA INVOICE / فاتورة مبدئية (غير ضريبية)'
-                        : 'ZATCA PHASE 2 TAX INVOICE / فاتورة ضريبية معتمدة'}
-                    </div>
-                    <div className="text-[11px] text-slate-600 mt-0.5">
-                      UUID: <span className="font-mono">8f94b2c0-7d1e-4b3a-9c5f-12894a6b7e01</span> • SHA-256 TLV Stamp Verified
-                    </div>
-                  </div>
-                  <span className="px-2.5 py-1 rounded bg-blue-700 text-white font-bold text-[11px]">
-                    PDF Ready
-                  </span>
-                </div>
-              )}
-
-              {/* Invoice Line Items */}
-              <table className="w-full text-xs border border-slate-200 rounded-lg overflow-hidden">
-                <thead className="bg-slate-100 text-slate-700">
-                  <tr>
-                    <th className="py-2 px-3 text-start">Description (Bilingual)</th>
-                    <th className="py-2 px-3 text-start">Analytic Account *</th>
-                    <th className="py-2 px-3 text-end">Qty</th>
-                    <th className="py-2 px-3 text-end">Unit Price</th>
-                    <th className="py-2 px-3 text-end">VAT 15%</th>
-                    <th className="py-2 px-3 text-end">Total (SAR)</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-200">
-                  {selectedInvoice.lines.map((l) => (
-                    <tr key={l.id}>
-                      <td className="py-2.5 px-3">
-                        <div className="font-bold text-slate-900">{l.descEn}</div>
-                        <div className="text-slate-500">{l.descAr}</div>
-                      </td>
-                      <td className="py-2.5 px-3">
-                        <span className="px-2 py-0.5 rounded bg-blue-50 text-blue-800 border border-blue-200 font-medium">
-                          {l.analytic}
-                        </span>
-                      </td>
-                      <td className="py-2.5 px-3 text-end">{l.qty}</td>
-                      <td className="py-2.5 px-3 text-end">{l.price.toLocaleString()}</td>
-                      <td className="py-2.5 px-3 text-end">{(l.qty * l.price * 0.15).toLocaleString()}</td>
-                      <td className="py-2.5 px-3 text-end font-bold">{(l.qty * l.price * 1.15).toLocaleString()}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-
-              <div className="flex flex-wrap items-center justify-between gap-4 pt-2">
-                <div className="text-slate-500">
-                  {t(
-                    'Direct Payment Reconciliation enabled — No bank statement required.',
-                    'تسوية الدفعات المباشرة مفعلة بدون الحاجة لكشف حساب بنكي.'
-                  )}
-                </div>
-                <div className="w-64 space-y-1 text-end">
-                  <div className="flex justify-between">
-                    <span>Tax Excluded:</span>
-                    <strong>SAR {selectedInvoice.taxExcluded.toLocaleString('en-US', { minimumFractionDigits: 2 })}</strong>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>VAT 15% (ZATCA):</span>
-                    <strong>SAR {(selectedInvoice.total - selectedInvoice.taxExcluded).toLocaleString('en-US', { minimumFractionDigits: 2 })}</strong>
-                  </div>
-                  <div className="flex justify-between pt-1 border-t border-slate-300 text-sm font-extrabold text-blue-900">
-                    <span>Amount Due:</span>
-                    <span>SAR {selectedInvoice.amountDue.toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-      {/* =====================================================================
-          MODAL 3: INVOICE / BILL CREATE FORM
+          MODAL 3: INVOICE / BILL DETAILS & CREATE FORM (ODOO 12 MODEL)
          ===================================================================== */}
       <InvoiceCreateModal
         isOpen={invoiceCreateOpen}
-        onClose={() => setInvoiceCreateOpen(false)}
+        onClose={() => {
+          setInvoiceCreateOpen(false);
+          setSelectedInvoice(null);
+        }}
+        invoice={selectedInvoice}
         type={invoiceCreateType}
         t={t}
         isRtl={isRtl}
         companies={COMPANIES}
         activeCompany={activeCompanyObj}
-        onSave={(newInvoice) => {
-          setInvoices([newInvoice, ...invoices]);
-          setSelectedInvoice(newInvoice);
+        onRegisterPayment={(inv) => {
+          setInvoiceCreateOpen(false);
+          setPaymentCreateDefaults({
+            type: inv.type === 'vendor' ? 'send' : 'receive',
+            partner: inv.customerEn,
+            amount: inv.amountDue || inv.total,
+            memo: `Payment for ${inv.number}`,
+            invoiceId: inv.id,
+          });
+          setPaymentCreateOpen(true);
+        }}
+        onSave={(savedInvoice) => {
+          if (selectedInvoice) {
+            setInvoices(invoices.map((inv) => (inv.id === savedInvoice.id ? savedInvoice : inv)));
+          } else {
+            setInvoices([savedInvoice, ...invoices]);
+          }
+          setSelectedInvoice(null);
         }}
       />
 
