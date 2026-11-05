@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import {
   BarChart3,
   FileSpreadsheet,
-  Printer,
   ChevronDown,
   ChevronRight,
   TrendingUp,
@@ -86,13 +85,6 @@ export default function FinancialReportsView({
           >
             <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-700" />
             <span>{t('Excel', 'إكسل')}</span>
-          </button>
-          <button
-            onClick={() => window.print()}
-            className="px-3 py-1.5 rounded-lg bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 text-xs font-bold transition flex items-center gap-1.5"
-          >
-            <Printer className="w-3.5 h-3.5 text-slate-500" />
-            <span>{t('Print PDF', 'طباعة')}</span>
           </button>
         </div>
       </div>

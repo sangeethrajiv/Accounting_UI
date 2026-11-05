@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import {
-  ChevronLeft, ChevronRight, Save, X, Printer, QrCode,
-  CreditCard, CheckCircle2, FileText, Plus, Trash2, Copy,
+  ChevronLeft, ChevronRight, Save, X, QrCode,
+  CreditCard, CheckCircle2, FileText, Plus, Trash2,
   ChevronDown, ExternalLink
 } from 'lucide-react';
 
@@ -19,8 +19,6 @@ export default function InvoiceFormView({
 }) {
   const [activeTab, setActiveTab] = useState('lines'); // 'lines' | 'other'
   const [isEditing, setIsEditing] = useState(false);
-  const [printMenuOpen, setPrintMenuOpen] = useState(false);
-  const [actionMenuOpen, setActionMenuOpen] = useState(false);
 
   // Editable local state initialized from invoice prop
   const [formData, setFormData] = useState({ ...invoice });
@@ -167,6 +165,266 @@ export default function InvoiceFormView({
     setIsEditing(false);
   };
 
+  const isProgressive = formData.invoiceSubtype === 'progressive';
+
+  if (isProgressive) {
+    return (
+      <div className="bg-[#f0f2f5] min-h-screen text-slate-800 text-xs font-sans pb-16 -mx-6 -my-5 p-6 space-y-3">
+        {/* 1. TOP BREADCRUMB & CONTROL PANEL */}
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-300 pb-3">
+          <div>
+            <div className="flex items-center gap-1.5 text-base text-[#0e7490] font-normal">
+              <button
+                onClick={onBack}
+                className="hover:underline font-semibold text-[#0e7490] focus:outline-none cursor-pointer"
+              >
+                {t('Progressive Invoices', 'فواتير الإنجاز')}
+              </button>
+              <span className="text-slate-400">/</span>
+              <span className="text-slate-700 font-semibold">
+                {isNewInvoice ? t('New', 'جديد') : (formData.blanketPoNumber || formData.number)}
+              </span>
+            </div>
+
+            <div className="flex items-center gap-2 mt-2">
+              {isEditing ? (
+                <>
+                  <button
+                    onClick={handleSaveEdits}
+                    className="px-3.5 py-1 rounded bg-[#2e6b7d] hover:bg-[#235361] text-white font-medium text-xs shadow-2xs transition cursor-pointer"
+                  >
+                    {t('Save', 'حفظ')}
+                  </button>
+                  <button
+                    onClick={() => {
+                      if (isNewInvoice) onBack();
+                      else setIsEditing(false);
+                    }}
+                    className="px-3.5 py-1 rounded bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 font-medium text-xs transition cursor-pointer"
+                  >
+                    {t('Discard', 'إلغاء')}
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button
+                    onClick={() => setIsEditing(true)}
+                    className="px-3.5 py-1 rounded bg-[#2e6b7d] hover:bg-[#235361] text-white font-medium text-xs shadow-2xs transition cursor-pointer"
+                  >
+                    {t('Edit', 'تعديل')}
+                  </button>
+                  <button
+                    onClick={onCreateNew}
+                    className="px-3.5 py-1 rounded bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 font-medium text-xs transition cursor-pointer"
+                  >
+                    {t('Create', 'إنشاء')}
+                  </button>
+                </>
+              )}
+            </div>
+          </div>
+
+          {!isNewInvoice && (
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-1 text-xs text-slate-600 bg-white border border-slate-300 rounded px-2 py-1">
+                <button
+                  disabled={!hasPrev}
+                  onClick={() => onSelectInvoice?.(allInvoices[currentIndex - 1])}
+                  className="p-0.5 rounded hover:bg-slate-100 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
+                >
+                  <ChevronLeft className="w-3.5 h-3.5" />
+                </button>
+                <span className="font-mono px-1 font-semibold">
+                  {currentIndex >= 0 ? `${currentIndex + 1} / ${allInvoices.length}` : '-'}
+                </span>
+                <button
+                  disabled={!hasNext}
+                  onClick={() => onSelectInvoice?.(allInvoices[currentIndex + 1])}
+                  className="p-0.5 rounded hover:bg-slate-100 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
+                >
+                  <ChevronRight className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* 2. STATUSBAR & ACTIONS */}
+        <div className="bg-white border border-slate-300 rounded-t-lg p-2 flex flex-wrap items-center justify-between gap-3 shadow-2xs">
+          <div className="flex items-center gap-1.5">
+            {formData.status === 'Draft' ? (
+              <button
+                onClick={() => {
+                  const updated = { ...formData, status: 'Approved' };
+                  setFormData(updated);
+                  onSave?.(updated);
+                }}
+                className="px-3.5 py-1 rounded bg-[#2e6b7d] hover:bg-[#235361] text-white font-medium text-xs shadow-2xs"
+              >
+                {t('Approve PO', 'اعتماد أمر الشراء')}
+              </button>
+            ) : (
+              <button
+                onClick={() => {
+                  const updated = { ...formData, status: 'Draft' };
+                  setFormData(updated);
+                  onSave?.(updated);
+                }}
+                className="px-3.5 py-1 rounded bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 font-medium text-xs"
+              >
+                {t('Reset to Draft', 'إعادة للمسودة')}
+              </button>
+            )}
+            <button
+              onClick={onBack}
+              className="px-3 py-1 rounded bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 font-medium text-xs"
+            >
+              {t('Cancel', 'إلغاء')}
+            </button>
+          </div>
+
+          <div className="flex items-center text-xs font-semibold">
+            <div
+              className={`px-4 py-1 flex items-center border border-r-0 border-slate-300 rounded-l ${
+                formData.status === 'Draft'
+                  ? 'bg-slate-200 text-slate-800 font-bold shadow-inner'
+                  : 'bg-white text-slate-400'
+              }`}
+            >
+              <span>{t('Draft', 'مسودة')}</span>
+            </div>
+            <div
+              className={`px-4 py-1 flex items-center border border-l-0 border-slate-300 rounded-r ${
+                formData.status !== 'Draft'
+                  ? 'bg-slate-200 text-slate-800 font-bold shadow-inner'
+                  : 'bg-white text-slate-400'
+              }`}
+            >
+              <span className="text-slate-300 mr-1">›</span>
+              <span>{t('Approved', 'معتمد')}</span>
+            </div>
+          </div>
+        </div>
+
+        {/* 3. CARD SHEET (MATCHING SCREENSHOT 4 & 6) */}
+        <div className="bg-white border-x border-b border-slate-300 rounded-b-lg shadow-sm p-8 space-y-6">
+          <div className="flex items-start justify-between">
+            <h1 className="text-2xl font-bold text-slate-900 font-sans">
+              {formData.blanketPoNumber || formData.number || 'PO-CC31-112025-00043'}
+            </h1>
+            {/* Smart Button */}
+            <div className="border border-slate-300 rounded-md p-2 bg-slate-50 hover:bg-slate-100 flex items-center gap-2 cursor-pointer shadow-2xs">
+              <FileText className="w-5 h-5 text-slate-700" />
+              <div className="text-start">
+                <div className="font-bold text-slate-900 font-mono text-xs">
+                  {(formData.invoicedAmount || 22389.35).toLocaleString('en-US', { minimumFractionDigits: 2 })} SR
+                </div>
+                <div className="text-[11px] text-slate-600 font-bold">
+                  {formData.invoiceCount || 10} Invoices
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-3.5 text-xs">
+            {/* Left Column */}
+            <div className="space-y-3">
+              <div className="flex items-center">
+                <label className="w-1/3 font-semibold text-slate-700">{t('PO Date', 'تاريخ أمر الشراء')}</label>
+                <div className="w-2/3">
+                  {isEditing ? (
+                    <input
+                      type="date"
+                      value={formData.poDate || formData.invoiceDate || ''}
+                      onChange={(e) => setFormData({ ...formData, poDate: e.target.value })}
+                      className="border border-slate-300 rounded px-2.5 py-1 text-xs w-full bg-white"
+                    />
+                  ) : (
+                    <span className="text-slate-800">{formData.poDate || formData.invoiceDate}</span>
+                  )}
+                </div>
+              </div>
+
+              <div className="flex items-center">
+                <label className="w-1/3 font-semibold text-slate-700">{t('Customer', 'العميل')}</label>
+                <div className="w-2/3">
+                  {isEditing ? (
+                    <input
+                      type="text"
+                      value={formData.customerEn || ''}
+                      onChange={(e) => setFormData({ ...formData, customerEn: e.target.value })}
+                      className="border border-slate-300 rounded px-2.5 py-1 text-xs w-full bg-[#d9e6f2]"
+                    />
+                  ) : (
+                    <a href="#cust" onClick={(e) => e.preventDefault()} className="text-[#0e7490] hover:underline font-medium">
+                      {formData.customerEn}
+                    </a>
+                  )}
+                </div>
+              </div>
+
+              <div className="flex items-center">
+                <label className="w-1/3 font-semibold text-slate-700">{t('Company', 'الشركة')}</label>
+                <div className="w-2/3 text-slate-700">
+                  {formData.companyName || 'Flames of Al-Yamama Hydraulic Co'}
+                </div>
+              </div>
+            </div>
+
+            {/* Right Column */}
+            <div className="space-y-3">
+              <div className="flex items-center">
+                <label className="w-1/3 font-semibold text-slate-700">{t('Currency', 'العملة')}</label>
+                <div className="w-2/3 text-[#0e7490] font-semibold">{formData.currency || 'SAR'}</div>
+              </div>
+
+              <div className="flex items-center">
+                <label className="w-1/3 font-semibold text-slate-700">{t('PO Total Amount', 'إجمالي أمر الشراء')}</label>
+                <div className="w-2/3">
+                  {isEditing ? (
+                    <input
+                      type="number"
+                      value={formData.poTotalAmount || formData.total || ''}
+                      onChange={(e) => setFormData({ ...formData, poTotalAmount: parseFloat(e.target.value) || 0 })}
+                      className="border border-slate-300 rounded px-2.5 py-1 text-xs w-full"
+                    />
+                  ) : (
+                    <span className="text-slate-900 font-semibold">
+                      {(formData.poTotalAmount || formData.total || 92000).toLocaleString('en-US', { minimumFractionDigits: 2 })} SR
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              <div className="flex items-center">
+                <label className="w-1/3 font-semibold text-slate-700">{t('Balance', 'الرصيد المتبقي')}</label>
+                <div className="w-2/3 text-slate-900 font-semibold">
+                  {(formData.balance || formData.amountDue || 69610.65).toLocaleString('en-US', { minimumFractionDigits: 2 })} SR
+                </div>
+              </div>
+
+              <div className="flex items-start">
+                <label className="w-1/3 font-semibold text-slate-700 pt-1">{t('Description', 'الوصف والبيان')}</label>
+                <div className="w-2/3">
+                  {isEditing ? (
+                    <textarea
+                      rows={2}
+                      value={formData.description || ''}
+                      onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                      className="border border-slate-300 rounded px-2.5 py-1 text-xs w-full"
+                    />
+                  ) : (
+                    <span className="text-slate-700">{formData.description || 'BARCC Annual Maintenance for Hydraulic Service'}</span>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="bg-[#f0f2f5] min-h-screen text-slate-800 text-xs font-sans pb-16 -mx-6 -my-5 p-6 space-y-3">
       {/* 1. TOP BREADCRUMB & CONTROL PANEL (EXACT ODOO SCREENSHOT HEADER) */}
@@ -223,85 +481,9 @@ export default function InvoiceFormView({
           </div>
         </div>
 
-        {/* Right: Print / Action dropdowns & Record Pager (Hidden when creating New invoice) */}
+        {/* Right: Record Pager (Hidden when creating New invoice) */}
         {!isNewInvoice && (
           <div className="flex items-center gap-3">
-            {/* Print Dropdown */}
-            <div className="relative">
-              <button
-                onClick={() => {
-                  setPrintMenuOpen(!printMenuOpen);
-                  setActionMenuOpen(false);
-                }}
-                className="px-3 py-1.5 rounded bg-white hover:bg-slate-50 border border-slate-300 text-slate-700 text-xs font-medium flex items-center gap-1 transition"
-              >
-                <span>{t('Print', 'طباعة')}</span>
-                <ChevronDown className="w-3 h-3 text-slate-500" />
-              </button>
-              {printMenuOpen && (
-                <div className="absolute right-0 mt-1 w-48 bg-white border border-slate-200 rounded-md shadow-lg py-1 z-30">
-                  <button
-                    onClick={() => {
-                      window.print();
-                      setPrintMenuOpen(false);
-                    }}
-                    className="w-full text-start px-3 py-1.5 hover:bg-slate-100 text-xs flex items-center gap-2"
-                  >
-                    <Printer className="w-3.5 h-3.5 text-slate-500" />
-                    <span>{t('Invoices / Tax Receipt', 'الفاتورة الضريبية')}</span>
-                  </button>
-                  <button
-                    onClick={() => {
-                      window.print();
-                      setPrintMenuOpen(false);
-                    }}
-                    className="w-full text-start px-3 py-1.5 hover:bg-slate-100 text-xs flex items-center gap-2"
-                  >
-                    <FileText className="w-3.5 h-3.5 text-slate-500" />
-                    <span>{t('Proforma Invoice', 'فاتورة بروفرما')}</span>
-                  </button>
-                </div>
-              )}
-            </div>
-
-            {/* Action Dropdown */}
-            <div className="relative">
-              <button
-                onClick={() => {
-                  setActionMenuOpen(!actionMenuOpen);
-                  setPrintMenuOpen(false);
-                }}
-                className="px-3 py-1.5 rounded bg-white hover:bg-slate-50 border border-slate-300 text-slate-700 text-xs font-medium flex items-center gap-1 transition"
-              >
-                <span>{t('Action', 'إجراءات')}</span>
-                <ChevronDown className="w-3 h-3 text-slate-500" />
-              </button>
-              {actionMenuOpen && (
-                <div className="absolute right-0 mt-1 w-44 bg-white border border-slate-200 rounded-md shadow-lg py-1 z-30">
-                  <button
-                    onClick={() => {
-                      alert(t('Invoice duplicated.', 'تم نسخ الفاتورة.'));
-                      setActionMenuOpen(false);
-                    }}
-                    className="w-full text-start px-3 py-1.5 hover:bg-slate-100 text-xs flex items-center gap-2"
-                  >
-                    <Copy className="w-3.5 h-3.5 text-slate-500" />
-                    <span>{t('Duplicate', 'نسخ')}</span>
-                  </button>
-                  <button
-                    onClick={() => {
-                      alert(t('ZATCA XML Exported.', 'تم تصدير ملف الزكاة XML.'));
-                      setActionMenuOpen(false);
-                    }}
-                    className="w-full text-start px-3 py-1.5 hover:bg-slate-100 text-xs flex items-center gap-2"
-                  >
-                    <QrCode className="w-3.5 h-3.5 text-slate-500" />
-                    <span>{t('Download ZATCA XML', 'تحميل XML الزكاة')}</span>
-                  </button>
-                </div>
-              )}
-            </div>
-
             {/* Pager (< 1 / 6 >) */}
             <div className="flex items-center gap-1 text-xs text-slate-600 bg-white border border-slate-300 rounded px-2 py-1">
               <button
@@ -337,24 +519,6 @@ export default function InvoiceFormView({
             className="px-3.5 py-1 rounded bg-[#2e6b7d] hover:bg-[#235361] text-white font-medium text-xs shadow-2xs transition cursor-pointer"
           >
             {t('Validate', 'اعتماد')}
-          </button>
-
-          <button
-            onClick={() => window.print()}
-            className="px-3 py-1 rounded bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 font-medium text-xs transition cursor-pointer"
-          >
-            {t('Preview', 'معاينة')}
-          </button>
-
-          <button
-            onClick={() => {
-              const updated = { ...formData, status: 'Proforma', zatcaStatus: 'Proforma (No XML)' };
-              setFormData(updated);
-              onSave?.(updated);
-            }}
-            className="px-3 py-1 rounded bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 font-medium text-xs transition cursor-pointer"
-          >
-            {t('Print Proforma Invoice', 'طباعة بروفرما')}
           </button>
 
           {isOpen && !isPaid && onRegisterPayment && (

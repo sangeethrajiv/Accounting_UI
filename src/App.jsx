@@ -19,6 +19,11 @@ import VendorBillsView, { INITIAL_VENDOR_BILLS } from './components/VendorBillsV
 import FinancialReportsView from './components/FinancialReportsView.jsx';
 import JournalEntryCreateModal from './components/JournalEntryCreateModal.jsx';
 import PartnerCreateModal from './components/PartnerCreateModal.jsx';
+import JournalEntryFormView from './components/JournalEntryFormView.jsx';
+import PaymentFormView from './components/PaymentFormView.jsx';
+import AssetsManagementView from './components/AssetsManagementView.jsx';
+import ReconciliationView from './components/ReconciliationView.jsx';
+import ConfigurationViews from './components/ConfigurationViews.jsx';
 
 // --- SAUDI GROUP COMPANIES (6 OPERATING ENTITIES FROM YAMAMA LIVE DATABASE) ---
 const COMPANIES = [
@@ -372,6 +377,130 @@ const INITIAL_INVOICES = [
     lines: [
       { id: 1, descEn: 'Workshop Counter Cash Sale — High-Pressure Hoses & Parker Fittings', descAr: 'بيع نقدي كاونتر الورشة — ليات ضغط عالي وتوصيلات باركر', analytic: 'CC-102 Spare Parts', qty: 5, price: 1500, tax: 15 }
     ]
+  },
+  {
+    id: 'PRG-1',
+    number: 'PO-CC31-112025-00043',
+    blanketPoNumber: 'PO-CC31-112025-00043',
+    poDate: '11/13/2025',
+    invoiceDate: '11/13/2025',
+    customerEn: 'Al Rushaid Construction Company (BARCC)',
+    customerAr: 'شركة الرشيد للبناء والمقاولات (باركت)',
+    vatNo: '300889944100003',
+    poTotalAmount: 92000.00,
+    invoicedAmount: 22389.35,
+    balance: 69610.65,
+    invoiceCount: 10,
+    taxExcluded: 80000.00,
+    total: 92000.00,
+    amountDue: 69610.65,
+    currency: 'SAR',
+    zatcaStatus: 'CLEARED (Progressive)',
+    status: 'Approved',
+    invoiceSubtype: 'progressive',
+    subtypeLabelEn: 'Progressive Invoice',
+    subtypeLabelAr: 'فاتورة إنجاز (مستخلص)',
+    companyId: 'HYD',
+    companyName: 'Flames of Al-Yamama Hydraulic Co',
+    description: 'BARCC Annual Maintenance for Hydraulic Service',
+    lines: [
+      { id: 1, descEn: 'BARCC Annual Maintenance for Hydraulic Service', descAr: 'صيانة سنوية هيدروليكية لشركة بارك', analytic: 'CC-101 Workshop Ops', qty: 1, price: 80000, tax: 15 }
+    ]
+  },
+  {
+    id: 'PRG-2',
+    number: 'PO-CC31-092025-00002',
+    blanketPoNumber: 'PO-CC31-092025-00002',
+    poDate: '09/10/2025',
+    invoiceDate: '09/10/2025',
+    customerEn: 'Al Rushaid Construction Company (BARCC)',
+    customerAr: 'شركة الرشيد للبناء والمقاولات (باركت)',
+    vatNo: '300889944100003',
+    poTotalAmount: 92000.00,
+    invoicedAmount: 91933.30,
+    balance: 66.70,
+    invoiceCount: 70,
+    taxExcluded: 80000.00,
+    total: 92000.00,
+    amountDue: 66.70,
+    currency: 'SAR',
+    zatcaStatus: 'CLEARED (Progressive)',
+    status: 'Approved',
+    invoiceSubtype: 'progressive',
+    subtypeLabelEn: 'Progressive Invoice',
+    subtypeLabelAr: 'فاتورة إنجاز (مستخلص)',
+    companyId: 'HYD',
+    companyName: 'Flames of Al-Yamama Hydraulic Co',
+    description: 'BARCC Hydraulic Overhaul & Progressive Maintenance',
+    lines: [
+      { id: 1, descEn: 'Hydraulic Overhaul & Maintenance Services', descAr: 'خدمات صيانة وعمرة هيدروليكية', analytic: 'CC-101 Workshop Ops', qty: 1, price: 80000, tax: 15 }
+    ]
+  },
+  {
+    id: 'CRN-1',
+    number: 'CRN/2026/0003',
+    customerEn: '44 Supermarket',
+    customerAr: 'سوبرماركت 44',
+    invoiceDate: '06/30/2026',
+    dueDateText: '06/30/2026',
+    companyName: 'Team Yamama',
+    salesperson: 'Administrator',
+    sourceDocument: 'T26-1667',
+    taxExcluded: 12.00,
+    tax: 1.80,
+    total: -13.80,
+    amountDue: 0.00,
+    currency: 'SAR',
+    status: 'Paid',
+    invoiceSubtype: 'refund',
+    subtypeLabelEn: 'Credit Note',
+    subtypeLabelAr: 'إشعار دائن',
+    companyId: 'HYD',
+    lines: []
+  },
+  {
+    id: 'CRN-2',
+    number: 'CRN2026-0056',
+    customerEn: 'Kanooz Contracting Company LLC. – 314668335800003',
+    customerAr: 'شركة كنوز للمقاولات ذ.م.م - 314668335800003',
+    invoiceDate: '03/12/2026',
+    dueDateText: '04/10/2026',
+    companyName: 'Flames of Al-Yamama Hydraulic Co',
+    salesperson: 'Abdul Wajid',
+    sourceDocument: 'CRH2026-10517',
+    taxExcluded: 945.00,
+    tax: 141.75,
+    total: -1086.75,
+    amountDue: 0.00,
+    currency: 'SAR',
+    status: 'Paid',
+    invoiceSubtype: 'refund',
+    subtypeLabelEn: 'Credit Note',
+    subtypeLabelAr: 'إشعار دائن',
+    companyId: 'HYD',
+    lines: []
+  },
+  {
+    id: 'CRN-3',
+    number: 'CRN2026-0055',
+    customerEn: 'Kanooz Contracting Est',
+    customerAr: 'مؤسسة كنوز للمقاولات',
+    invoiceDate: '03/12/2026',
+    dueDateText: '04/10/2026',
+    companyName: 'Flames of Al-Yamama Hydraulic Co',
+    salesperson: 'Abdul Wajid',
+    sourceDocument: 'CRH2026-10518',
+    taxExcluded: 2720.00,
+    tax: 408.00,
+    total: -3128.00,
+    amountDue: 0.00,
+    currency: 'SAR',
+    status: 'Paid',
+    invoiceSubtype: 'refund',
+    subtypeLabelEn: 'Credit Note',
+    subtypeLabelAr: 'إشعار دائن',
+    companyId: 'HYD',
+    lines: []
   }
 ];
 
@@ -397,6 +526,44 @@ const VENDORS_DIRECTORY = [
   { id: 'V-3', name: 'Petronyx Industrial Oils & Fuels', email: 'accounts@petronyx.fuels.sa', phone: '+966 13 882 6789', country: 'Saudi Arabia', bills: 1, rating: 2, docs: 1, payments: 3, poCount: 4, color: 'bg-amber-100 text-amber-800' },
   { id: 'V-4', name: 'Saudi Customs & ZATCA Port Authority', email: 'bayan.clearance@zatca.gov.sa', phone: '+966 19993', country: 'Saudi Arabia (Gov)', bills: 6, rating: 5, docs: 8, payments: 6, poCount: 0, color: 'bg-emerald-100 text-emerald-800' },
   { id: 'V-5', name: 'Al Yamama Logistics & Fleet Co. (Sister Co.)', email: 'ic.billing@alyamama.sa', phone: '+966 11 210 9900', country: 'Saudi Arabia (Inter-Company)', bills: 5, rating: 5, docs: 5, payments: 4, poCount: 9, color: 'bg-blue-100 text-blue-900' },
+];
+
+// --- DEMO PRODUCTS (SELLABLE & PURCHASABLE) ---
+const INITIAL_PRODUCTS = [
+  { id: 'PRD-1', name: 'Axial Piston Variable Pump A10VSO 31 Series', code: 'PRD-PUMP-01', cat: 'Hydraulic Pumps', salePrice: 28500.0, cost: 21500.0, onHand: 8, uom: 'Units', type: 'both' },
+  { id: 'PRD-2', name: 'High-Pressure Parker Hydraulic Seal Kit 350 Bar', code: 'PRD-SEAL-04', cat: 'Seal Kits & O-Rings', salePrice: 4500.0, cost: 2800.0, onHand: 45, uom: 'Kits', type: 'both' },
+  { id: 'PRD-3', name: 'Hard Chrome Plated Shaft Rod 80mm x 3000mm', code: 'PRD-ROD-80', cat: 'Raw Materials', salePrice: 6800.0, cost: 4200.0, onHand: 24, uom: 'Rods', type: 'purchasable' },
+  { id: 'PRD-4', name: 'Hydraulic Directional Control Valve 4/3-Way', code: 'PRD-VLV-09', cat: 'Valves & Manifolds', salePrice: 13435.0, cost: 9800.0, onHand: 12, uom: 'Units', type: 'both' },
+  { id: 'PRD-5', name: 'Annual Service Maintenance Subscription - 1 Year', code: 'SRV-SUB-01', cat: 'Maintenance Services', salePrice: 325.0, cost: 150.0, onHand: 999, uom: 'Units', type: 'sellable' },
+  { id: 'PRD-6', name: 'Mobile Crane Mobilization & Rigging Service', code: 'SRV-CRN-80', cat: 'Leasing & Logistics', salePrice: 145000.0, cost: 95000.0, onHand: 2, uom: 'Jobs', type: 'sellable' },
+];
+
+// --- DEMO INTERNAL VOUCHERS (RECEIPTS & PAYMENTS) ---
+const INITIAL_VOUCHERS = [
+  { id: 'VCH-1', number: 'VCH/IN/2026/0014', date: '2026-10-30', type: 'receipt', partner: 'Neom Bay Infrastructure JV', journal: 'Al Rajhi Corporate Bank SAR (111101)', amount: 150000.0, memo: 'Advance deposit for crane rental', status: 'Posted' },
+  { id: 'VCH-2', number: 'VCH/IN/2026/0013', date: '2026-10-28', type: 'receipt', partner: '44 Supermarket', journal: 'Workshop Petty Cash Drawer SAR', amount: 1121.25, memo: 'Counter cash receipt for hydraulic hoses', status: 'Posted' },
+  { id: 'VCH-3', number: 'VCH/OUT/2026/0022', date: '2026-10-25', type: 'payment', partner: 'Ready Mat Industrial Saudi', journal: 'Al Rajhi Corporate Bank SAR (111101)', amount: 34500.0, memo: 'Chrome rods batch advance payment', status: 'Posted' },
+  { id: 'VCH-4', number: 'VCH/OUT/2026/0021', date: '2026-10-20', type: 'payment', partner: 'Saudi Customs Authority (Zakat & Tax)', journal: 'SNB National Commercial Bank SAR', amount: 14500.0, memo: 'Landed cost import customs clearance WH/IN/0089', status: 'Posted' },
+];
+
+// --- DEMO JOURNAL ITEMS (account.move.line) ---
+const INITIAL_JOURNAL_ITEMS = [
+  { id: 'JI-1', date: '2026-10-30', moveNumber: 'RBILL/2026/10/0001', partner: 'Ready Mat Industrial Saudi', account: '113101 — Inventory Valuation Account', label: 'Hydraulic Chrome Rods 80mm', analytic: 'CC-101 Workshop Operations', debit: 34500.0, credit: 0.0, balance: 34500.0, reconciled: true },
+  { id: 'JI-2', date: '2026-10-30', moveNumber: 'RBILL/2026/10/0001', partner: 'Ready Mat Industrial Saudi', account: '113901 — Stock Interim Account', label: 'Stock interim matching entry', analytic: 'CC-101 Workshop Operations', debit: 0.0, credit: 34500.0, balance: -34500.0, reconciled: true },
+  { id: 'JI-3', date: '2026-10-30', moveNumber: 'INV/2026/00012', partner: 'Riyadh Metro Construction Corp.', account: '112101 — Accounts Receivable', label: 'Overhaul 400-Ton Cylinder', analytic: 'CC-101 Workshop Operations', debit: 57500.0, credit: 0.0, balance: 57500.0, reconciled: false },
+  { id: 'JI-4', date: '2026-10-30', moveNumber: 'INV/2026/00012', partner: 'Riyadh Metro Construction Corp.', account: '411101 — Revenue from Overhauls', label: 'Overhaul 400-Ton Cylinder', analytic: 'CC-101 Workshop Operations', debit: 0.0, credit: 50000.0, balance: -50000.0, reconciled: false },
+  { id: 'JI-5', date: '2026-10-30', moveNumber: 'INV/2026/00012', partner: 'Riyadh Metro Construction Corp.', account: '214101 — VAT Output Tax 15%', label: 'VAT 15% on overhaul', analytic: 'CC-101 Workshop Operations', debit: 0.0, credit: 7500.0, balance: -7500.0, reconciled: false },
+  { id: 'JI-6', date: '2026-10-28', moveNumber: 'BILL/2026/10/0198', partner: 'Bosch Rexroth AG (Germany)', account: '113101 — Inventory Valuation Account', label: 'Axial Piston Variable Pumps', analytic: 'CC-102 Spare Parts', debit: 140869.57, credit: 0.0, balance: 140869.57, reconciled: false },
+  { id: 'JI-7', date: '2026-10-28', moveNumber: 'BILL/2026/10/0198', partner: 'Bosch Rexroth AG (Germany)', account: '214201 — VAT Input Tax Recoverable', label: 'VAT 15% on pump procurement', analytic: 'CC-102 Spare Parts', debit: 21130.43, credit: 0.0, balance: 21130.43, reconciled: false },
+  { id: 'JI-8', date: '2026-10-28', moveNumber: 'BILL/2026/10/0198', partner: 'Bosch Rexroth AG (Germany)', account: '211101 — Accounts Payable', label: 'Axial Piston Variable Pumps', analytic: 'CC-102 Spare Parts', debit: 0.0, credit: 162000.0, balance: -162000.0, reconciled: false },
+];
+
+// --- DEMO ANALYTIC ITEMS (account.analytic.line) ---
+const INITIAL_ANALYTIC_ITEMS = [
+  { id: 'AI-1', date: '2026-10-30', name: 'Station TBM Hydraulic Jacks Overhaul', analyticAccount: 'CC-101 Workshop Operations', generalAccount: '411101 Revenue', partner: 'Riyadh Metro Construction Corp.', ref: 'CNTR-RMC-2026', amount: 85000.0, unitAmount: 1.0 },
+  { id: 'AI-2', date: '2026-10-30', name: 'Heavy Lowbed Transport Dammam to Riyadh', analyticAccount: 'CC-401 Fleet Transport', generalAccount: '511201 Direct Cost', partner: 'Al Yamama Logistics Co.', ref: 'WH/TR/0088', amount: -13500.0, unitAmount: 3.0 },
+  { id: 'AI-3', date: '2026-10-28', name: 'Axial Piston Pumps Distribution Batch #1', analyticAccount: 'CC-301 Trading & Distribution', generalAccount: '411201 Spare Parts Revenue', partner: 'Acme Arabia Industrial Corp.', ref: 'SO-2026-081', amount: 35270.0, unitAmount: 1.0 },
+  { id: 'AI-4', date: '2026-10-25', name: 'Marine Winch Hydraulic Motor Rebuild', analyticAccount: 'CC-101 Workshop Operations', generalAccount: '411101 Revenue', partner: 'Red Sea Drilling & Marine Services', ref: 'WO-2026-114', amount: 41750.0, unitAmount: 1.0 },
 ];
 
 export default function App() {
@@ -432,9 +599,55 @@ export default function App() {
   const [vendorBills, setVendorBills] = useState(INITIAL_VENDOR_BILLS);
   const [journalEntries, setJournalEntries] = useState(JOURNAL_ENTRIES_LIST);
   const [partnersDirectory, setPartnersDirectory] = useState(VENDORS_DIRECTORY);
+  const [products, setProducts] = useState(INITIAL_PRODUCTS);
+  const [vouchers, setVouchers] = useState(INITIAL_VOUCHERS);
+  const [journalItems, setJournalItems] = useState(INITIAL_JOURNAL_ITEMS);
+  const [analyticItems, setAnalyticItems] = useState(INITIAL_ANALYTIC_ITEMS);
   const [selectedInvoice, setSelectedInvoice] = useState(null);
   const [printPreviewMode, setPrintPreviewMode] = useState(null); // null | 'proforma' | 'zatca'
   const [selectedJeRecord, setSelectedJeRecord] = useState(null);
+
+  const handleCreateNewJournalEntry = () => {
+    const newJe = {
+      id: `JE-${Date.now()}`,
+      number: 'Draft',
+      isNew: true,
+      date: new Date().toISOString().split('T')[0],
+      forceDate: new Date().toISOString().split('T')[0],
+      ref: '',
+      partner: '',
+      journal: 'Miscellaneous Operations (SAR)',
+      company: activeCompanyObj?.nameEn || 'Flames of Al-Yamama Hydraulic Co',
+      project: '',
+      status: 'Draft',
+      total: 0.0,
+      items: [
+        {
+          id: 1,
+          account: '112101 — Accounts Receivable',
+          partner: '',
+          product: '',
+          label: '',
+          analytic: 'CC-101 Workshop Operations',
+          debit: 0.0,
+          credit: 0.0,
+          tax: '',
+        },
+        {
+          id: 2,
+          account: '411101 — Hydraulic Overhaul Revenue',
+          partner: '',
+          product: '',
+          label: '',
+          analytic: 'CC-101 Workshop Operations',
+          debit: 0.0,
+          credit: 0.0,
+          tax: '',
+        },
+      ],
+    };
+    setSelectedJeRecord(newJe);
+  };
 
   // Creation Modals & Payment State
   const [invoiceCreateOpen, setInvoiceCreateOpen] = useState(false);
@@ -661,9 +874,9 @@ export default function App() {
           ],
         },
         { labelEn: 'Credit Notes', labelAr: 'الإشعارات الدائنة', view: 'invoices', chip: 'Credit Notes', odooId: 'account.menu_action_invoice_out_refund' },
-        { labelEn: 'Internal Voucher', labelAr: 'سندات القبض الداخلية', view: 'journal_entries', chip: 'Internal Voucher', odooId: 'account_voucher_extension.menu_internal_voucher' },
+        { labelEn: 'Internal Voucher', labelAr: 'سندات القبض الداخلية', view: 'internal_voucher', chip: 'Customer Receipts', odooId: 'account_voucher_extension.menu_internal_voucher' },
         { labelEn: 'Payments', labelAr: 'المدفوعات والشيكات', view: 'payments', chip: 'Customer Payments', odooId: 'account.menu_action_account_payments_receivable' },
-        { labelEn: 'Products', labelAr: 'المنتجات والخدمات', view: 'product_categories', chip: 'Sellable Products', odooId: 'account.product_product_menu_sellable' },
+        { labelEn: 'Products', labelAr: 'المنتجات والخدمات', view: 'products', chip: 'Sellable Products', odooId: 'account.product_product_menu_sellable' },
         { labelEn: 'Customers', labelAr: 'دليل العملاء', view: 'vendors', chip: 'Customers', odooId: 'account.menu_account_customer' },
       ],
     },
@@ -686,10 +899,10 @@ export default function App() {
           ],
         },
         { labelEn: 'Refunds', labelAr: 'إشعارات المدين للموردين', view: 'bills', chip: 'Vendor Refunds', odooId: 'account.menu_action_invoice_in_refund' },
-        { labelEn: 'Internal Voucher', labelAr: 'سندات الصرف للمشتريات', view: 'bills', chip: 'Purchase Receipts', odooId: 'account_voucher_extension.menu_action_purchase_receipt' },
+        { labelEn: 'Internal Voucher', labelAr: 'سندات الصرف للمشتريات', view: 'internal_voucher', chip: 'Vendor Vouchers', odooId: 'account_voucher_extension.menu_action_purchase_receipt' },
         { labelEn: 'Payments', labelAr: 'مدفوعات الموردين', view: 'payments', chip: 'Vendor Payments', odooId: 'account.menu_action_account_payments_payable' },
         { labelEn: 'Landed Costs', labelAr: 'التكاليف الإضافية للمخزون', view: 'landed_costs', chip: 'Landed Costs', odooId: 'landedcost_custom.menu_stock_landed_cost' },
-        { labelEn: 'Products', labelAr: 'منتجات المشتريات', view: 'product_categories', chip: 'Purchasable Products', odooId: 'account.product_product_menu_purchasable' },
+        { labelEn: 'Products', labelAr: 'منتجات المشتريات', view: 'products', chip: 'Purchasable Products', odooId: 'account.product_product_menu_purchasable' },
         { labelEn: 'Vendors', labelAr: 'دليل الموردين', view: 'vendors', chip: 'Vendors', odooId: 'account.menu_account_supplier' },
       ],
     },
@@ -704,9 +917,9 @@ export default function App() {
           labelEn: 'Accounting Entries',
           labelAr: 'القيود المحاسبية',
           subItems: [
-            { labelEn: 'Journal Entries', labelAr: 'قيود اليومية', view: 'journal_entries', chip: 'Posted', odooId: 'account.menu_action_move_journal_line_form' },
-            { labelEn: 'Journal Items', labelAr: 'عناصر اليومية', view: 'journal_entries', chip: 'All Items', odooId: 'account.menu_action_account_moves_all' },
-            { labelEn: 'Analytic Items', labelAr: 'القيود التحليلية', view: 'journal_entries', chip: 'Analytic', odooId: 'account.menu_action_analytic_lines_tree' },
+            { labelEn: 'Journal Entries', labelAr: 'قيود اليومية', view: 'journal_entries', chip: 'Journal Entries', odooId: 'account.menu_action_move_journal_line_form' },
+            { labelEn: 'Journal Items', labelAr: 'عناصر اليومية', view: 'journal_items', chip: 'Journal Items', odooId: 'account.menu_action_account_moves_all' },
+            { labelEn: 'Analytic Items', labelAr: 'القيود التحليلية', view: 'analytic_items', chip: 'Analytic Items', odooId: 'account.menu_action_analytic_lines_tree' },
           ],
         },
         {
@@ -714,8 +927,8 @@ export default function App() {
           labelEn: 'Management',
           labelAr: 'الإدارة',
           subItems: [
-            { labelEn: 'Assets', labelAr: 'الأصول الثابتة', view: 'landed_costs', chip: 'Fixed Assets', odooId: 'om_account_asset.menu_action_account_asset_asset_form' },
-            { labelEn: 'Asset Rental', labelAr: 'تأجير الأصول', view: 'landed_costs', chip: 'Asset Rental', odooId: 'asset_management_extended.menu_action_asset_rental' },
+            { labelEn: 'Assets', labelAr: 'الأصول الثابتة', view: 'assets', chip: 'Fixed Assets', odooId: 'om_account_asset.menu_action_account_asset_asset_form' },
+            { labelEn: 'Asset Rental', labelAr: 'تأجير الأصول', view: 'asset_rental', chip: 'Asset Rental', odooId: 'asset_management_extended.menu_action_asset_rental' },
           ],
         },
         {
@@ -723,8 +936,8 @@ export default function App() {
           labelEn: 'Actions',
           labelAr: 'الإجراءات',
           subItems: [
-            { labelEn: 'Reconciliation', labelAr: 'التسوية', view: 'reconcile', chip: 'Unreconciled', odooId: 'account.menu_action_manual_reconciliation' },
-            { labelEn: 'Tax Adjustments', labelAr: 'تسويات الضرائب', view: 'journal_entries', chip: 'Tax Adjustment', odooId: 'account.menu_action_tax_adjustment' },
+            { labelEn: 'Reconciliation', labelAr: 'التسوية', view: 'reconciliation', chip: 'Reconciliation', odooId: 'account.menu_action_manual_reconciliation' },
+            { labelEn: 'Tax Adjustments', labelAr: 'تسويات الضرائب', view: 'tax_adjustments', chip: 'Tax Adjustments', odooId: 'account.menu_action_tax_adjustment' },
           ],
         },
         {
@@ -732,7 +945,7 @@ export default function App() {
           labelEn: 'Generate Entries',
           labelAr: 'توليد القيود',
           subItems: [
-            { labelEn: 'Generate Assets Entries', labelAr: 'توليد قيود إهلاك الأصول', view: 'journal_entries', chip: 'Depreciation Wizard', odooId: 'om_account_asset.menu_asset_depreciation_confirmation_wizard' },
+            { labelEn: 'Generate Assets Entries', labelAr: 'توليد قيود إهلاك الأصول', view: 'assets', chip: 'Depreciation Wizard', odooId: 'om_account_asset.menu_asset_depreciation_confirmation_wizard' },
           ],
         },
       ],
@@ -804,15 +1017,15 @@ export default function App() {
           labelEn: 'Accounting',
           labelAr: 'المحاسبة',
           subItems: [
-            { labelEn: 'Currencies', labelAr: 'العملات', view: 'product_categories', chip: 'Currencies', odooId: 'base.action_currency_form' },
-            { labelEn: 'Chart of Accounts', labelAr: 'شجرة الحسابات', view: 'product_categories', chip: 'CoA', odooId: 'account.action_account_form' },
-            { labelEn: 'Taxes', labelAr: 'الضرائب', view: 'product_categories', chip: 'Taxes', odooId: 'account.action_tax_form' },
-            { labelEn: 'Fiscal Positions', labelAr: 'الأوضاع المالية والضريبية', view: 'product_categories', chip: 'Fiscal Positions', odooId: 'account.action_account_fiscal_position_form' },
-            { labelEn: 'Bank Accounts', labelAr: 'الحسابات البنكية', view: 'product_categories', chip: 'Bank Accounts', odooId: 'account.action_account_bank_journal_form' },
+            { labelEn: 'Currencies', labelAr: 'العملات', view: 'configuration', chip: 'currencies', odooId: 'base.action_currency_form' },
+            { labelEn: 'Chart of Accounts', labelAr: 'شجرة الحسابات', view: 'configuration', chip: 'coa', odooId: 'account.action_account_form' },
+            { labelEn: 'Taxes', labelAr: 'الضرائب', view: 'configuration', chip: 'taxes', odooId: 'account.action_tax_form' },
+            { labelEn: 'Fiscal Positions', labelAr: 'الأوضاع المالية والضريبية', view: 'configuration', chip: 'taxes', odooId: 'account.action_account_fiscal_position_form' },
+            { labelEn: 'Bank Accounts', labelAr: 'الحسابات البنكية', view: 'configuration', chip: 'journals', odooId: 'account.action_account_bank_journal_form' },
             { labelEn: 'Fiscal Year', labelAr: 'السنة المالية', view: 'lock_dates', chip: 'Fiscal Year', odooId: 'account.action_fiscal_year' },
-            { labelEn: 'Journals', labelAr: 'دفاتر اليومية', view: 'product_categories', chip: 'Journals', odooId: 'account.action_account_journal_form' },
-            { labelEn: 'Incoterms', labelAr: 'شروط التجارة الدولية (Incoterms)', view: 'product_categories', chip: 'Incoterms', odooId: 'account.action_incoterms_tree' },
-            { labelEn: 'Reconciliation Models', labelAr: 'نماذج التسوية', view: 'reconcile', chip: 'Reconciliation Models', odooId: 'account.action_account_reconcile_model' },
+            { labelEn: 'Journals', labelAr: 'دفاتر اليومية', view: 'configuration', chip: 'journals', odooId: 'account.action_account_journal_form' },
+            { labelEn: 'Incoterms', labelAr: 'شروط التجارة الدولية (Incoterms)', view: 'configuration', chip: 'terms', odooId: 'account.action_incoterms_tree' },
+            { labelEn: 'Reconciliation Models', labelAr: 'نماذج التسوية', view: 'reconciliation', chip: 'Reconciliation Models', odooId: 'account.action_account_reconcile_model' },
           ],
         },
         {
@@ -820,8 +1033,8 @@ export default function App() {
           labelEn: 'Management',
           labelAr: 'الإدارة',
           subItems: [
-            { labelEn: 'Payment Terms', labelAr: 'شروط الدفع', view: 'product_categories', chip: 'Payment Terms', odooId: 'account.action_payment_term_form' },
-            { labelEn: 'Asset Types', labelAr: 'أنواع الأصول الثابتة', view: 'product_categories', chip: 'Asset Types', odooId: 'om_account_asset.action_account_asset_asset_list_normal_purchase' },
+            { labelEn: 'Payment Terms', labelAr: 'شروط الدفع', view: 'configuration', chip: 'terms', odooId: 'account.action_payment_term_form' },
+            { labelEn: 'Asset Types', labelAr: 'أنواع الأصول الثابتة', view: 'assets', chip: 'Fixed Assets', odooId: 'om_account_asset.action_account_asset_asset_list_normal_purchase' },
           ],
         },
         {
@@ -1351,8 +1564,8 @@ export default function App() {
           </div>
         </header>
 
-        {/* 2. SUB-HEADER ACTION, SEARCH & PAGINATION BAR (Hidden when viewing an Invoice Form View) */}
-        {!(activeView === 'invoices' && selectedInvoice) && (
+        {/* 2. SUB-HEADER ACTION, SEARCH & PAGINATION BAR (Hidden when viewing Form Views) */}
+        {!( (activeView === 'invoices' && selectedInvoice) || (activeView === 'journal_entries' && selectedJeRecord) || (activeView === 'payments' && selectedPayment) ) && (
         <div className="bg-white border-b border-slate-200 px-6 py-3 flex flex-wrap items-center justify-between gap-4 shrink-0">
           {/* Left: New / Upload / Save / Discard Buttons + Active View Title */}
           <div className="flex items-center gap-2.5">
@@ -1396,54 +1609,103 @@ export default function App() {
                           const isRefund = activeChips.includes('Credit Notes');
                           const subtype = isCash ? 'cash' : isCredit ? 'credit' : isProforma ? 'proforma' : isProgressive ? 'progressive' : isRefund ? 'refund' : 'cash';
                           handleCreateNewInvoice(subtype);
+                        } else if (activeView === 'journal_entries') {
+                          handleCreateNewJournalEntry();
                         } else if (activeView === 'payments' || activeView === 'reconcile') {
                           const isVendorPay = activeChips.includes('Vendor Payments');
-                          setPaymentCreateDefaults({
-                            type: isVendorPay ? 'send' : 'receive',
+                          setSelectedPayment({
+                            id: `PAY-${Date.now()}`,
+                            number: 'Draft Payment',
+                            isNew: true,
+                            paymentType: isVendorPay ? 'send' : 'receive',
                             partner: '',
-                            amount: 25000,
+                            amount: 0,
+                            date: new Date().toISOString().split('T')[0],
+                            journal: 'Al Rajhi Corporate Bank SAR (111101)',
+                            paymentMethod: 'Electronic Bank Transfer (SARIE / SADAD)',
                             memo: '',
-                            invoiceId: null,
-                            billId: null,
+                            status: 'Draft',
                           });
-                          setPaymentCreateOpen(true);
-                        } else if (activeView === 'journal_entries') {
-                          setJournalEntryCreateOpen(true);
                         } else if (activeView === 'vendors') {
                           setPartnerCreateType(activeChips.includes('Customers') ? 'customer' : 'vendor');
                           setPartnerCreateOpen(true);
+                        } else if (activeView === 'internal_voucher') {
+                          const isVendorVch = activeChips.includes('Vendor Vouchers');
+                          setVouchers((prev) => [
+                            {
+                              id: `VCH-${Date.now()}`,
+                              number: isVendorVch ? `VCH/OUT/2026/00${prev.length + 1}` : `VCH/IN/2026/00${prev.length + 1}`,
+                              date: new Date().toISOString().split('T')[0],
+                              type: isVendorVch ? 'payment' : 'receipt',
+                              partner: 'New Partner',
+                              journal: 'Workshop Petty Cash Drawer SAR',
+                              amount: 5000.0,
+                              memo: 'Workshop counter settlement voucher',
+                              status: 'Posted',
+                            },
+                            ...prev,
+                          ]);
+                          alert(t('New internal voucher generated successfully.', 'تم إنشاء سند داخلي جديد بنجاح.'));
                         } else {
                           handleCreateNewInvoice('cash');
                         }
                       }}
-                      className="px-3.5 py-1.5 rounded-md bg-blue-700 hover:bg-blue-800 text-white font-semibold text-xs shadow-xs transition"
+                      className="px-3.5 py-1.5 rounded bg-[#2e6b7d] hover:bg-[#235361] text-white font-medium text-xs shadow-2xs transition cursor-pointer"
                     >
-                      {t('New', 'جديد')}
+                      {t('Create', 'إنشاء')}
                     </button>
-                    {(activeView === 'invoices' || activeView === 'bills') && (
-                      <button
-                        onClick={() => {
-                          if (activeView === 'invoices') {
-                            handleCreateNewInvoice('proforma');
-                          } else {
-                            setInvoiceCreateType('vendor');
-                            setInvoiceCreateOpen(true);
-                          }
-                        }}
-                        className="px-3 py-1.5 rounded-md bg-white hover:bg-blue-50 text-blue-700 border border-blue-200 font-semibold text-xs transition"
-                      >
-                        {t('Proforma / Upload', 'بروفرما / رفع')}
-                      </button>
-                    )}
+                    <button
+                      onClick={() => alert(t('Import feature ready for data integration', 'خاصية الاستيراد جاهزة للربط'))}
+                      className="px-3 py-1.5 rounded bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 font-medium text-xs transition cursor-pointer"
+                    >
+                      {t('Import', 'استيراد')}
+                    </button>
                   </div>
                 )}
                 <div className="flex items-center gap-2">
                   <h1 className="text-base font-bold text-slate-800">
                     {activeView === 'dashboard' && t('Accounting Dashboard', 'لوحة التحكم المحاسبية')}
-                    {activeView === 'invoices' && t('Customer Invoices & Proforma', 'فواتير العملاء والفواتير المبدئية (البروفرما)')}
+                    {activeView === 'invoices' && (
+                      activeChips.includes('Cash Invoices') ? t('Cash Invoices', 'الفواتير النقدية') :
+                      activeChips.includes('Credit Invoices') ? t('Credit Invoices', 'فواتير الآجل') :
+                      activeChips.includes('Proforma Only') || activeChips.includes('Proforma Invoices') ? t('Proforma Invoices', 'الفواتير المبدئية') :
+                      activeChips.includes('Progressive Invoices') ? t('Progressive Invoices', 'فواتير الإنجاز (المستخلصات)') :
+                      activeChips.includes('Credit Notes') ? t('Credit Notes', 'الإشعارات الدائنة') :
+                      t('Customer Invoices', 'فواتير العملاء')
+                    )}
                     {activeView === 'journal_entries' && t('Journal Entries', 'قيود اليومية')}
-                    {activeView === 'vendors' && t('Vendors & Customers Directory', 'دليل الموردين والعملاء')}
-                    {activeView === 'bills' && t('Vendor Bills & Inter-Company Mirroring', 'فواتير الموردين والشركات الشقيقة')}
+                    {activeView === 'journal_items' && t('Journal Items', 'عناصر اليومية')}
+                    {activeView === 'analytic_items' && t('Analytic Items', 'القيود التحليلية')}
+                    {activeView === 'assets' && t('Fixed Assets Management', 'إدارة الأصول الثابتة')}
+                    {activeView === 'asset_rental' && t('Asset Rental & Equipment Leases', 'تأجير الأصول والمعدات الثقيلة')}
+                    {activeView === 'reconciliation' && t('Bank & Invoices Reconciliation', 'التسوية البنكية وتسوية الفواتير')}
+                    {activeView === 'tax_adjustments' && t('VAT 15% Tax Adjustments', 'تسويات ضريبة القيمة المضافة')}
+                    {activeView === 'internal_voucher' && (
+                      activeChips.includes('Vendor Vouchers')
+                        ? t('Supplier Payment Vouchers (سندات صرف)', 'سندات صرف المشتريات')
+                        : t('Customer Receipt Vouchers (سندات قبض)', 'سندات قبض العملاء')
+                    )}
+                    {activeView === 'products' && (
+                      activeChips.includes('Purchasable Products')
+                        ? t('Purchasable Products & Raw Materials', 'منتجات المشتريات والمواد الخام')
+                        : t('Sellable Products & Workshop Services', 'المنتجات والخدمات القابلة للبيع')
+                    )}
+                    {activeView === 'configuration' && (
+                      activeChips.includes('coa') ? t('Chart of Accounts', 'شجرة الحسابات') :
+                      activeChips.includes('journals') ? t('Journals Configuration', 'دفاتر اليومية') :
+                      activeChips.includes('taxes') ? t('Taxes Configuration (VAT 15%)', 'إعدادات الضرائب') :
+                      activeChips.includes('terms') ? t('Payment Terms', 'شروط الدفع') :
+                      t('Accounting Configuration', 'إعدادات المحاسبة')
+                    )}
+                    {activeView === 'vendors' && (
+                      activeChips.includes('Customers') ? t('Customers', 'دليل العملاء') : t('Vendors', 'دليل الموردين')
+                    )}
+                    {activeView === 'bills' && (
+                      activeChips.includes('To Approve') ? t('To Approve Bills', 'فواتير قيد الاعتماد') :
+                      activeChips.includes('Approved Bills') ? t('Approved Bills', 'الفواتير المعتمدة') :
+                      activeChips.includes('Vendor Refunds') ? t('Vendor Refunds', 'إشعارات المدين للموردين') :
+                      t('Vendor Bills', 'فواتير الموردين')
+                    )}
                     {activeView === 'landed_costs' && t('Landed Costs & Fixed Assets', 'التكاليف الإضافية للمخزون والأصول الثابتة')}
                     {activeView === 'reconcile' && t('Payment Reconciliation & Cheques', 'تسوية الدفعات وسجل الشيكات')}
                     {activeView === 'payments' && (
@@ -1467,48 +1729,43 @@ export default function App() {
 
           {/* Center: Search Bar */}
           {activeView === 'settings' ? (
-            <div className="flex-1 max-w-xl mx-auto">
-              <div className="flex items-center gap-1.5 bg-slate-50 border border-slate-300 focus-within:border-blue-700 focus-within:bg-white rounded-full px-3 py-1 transition">
-                <Search className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+            <div className="flex-1 max-w-md mx-auto">
+              <div className="flex items-center gap-1.5 bg-white border border-slate-300 focus-within:border-[#2e6b7d] rounded px-3 py-1 transition">
                 <input
                   type="text"
                   value={settingsSearchQuery}
                   onChange={(e) => setSettingsSearchQuery(e.target.value)}
-                  placeholder={t('Search settings (ZATCA, Taxes, Currencies, Payments, Bank, OCR...)...', 'بحث في إعدادات المحاسبة...')}
+                  placeholder={t('Search settings...', 'بحث في إعدادات المحاسبة...')}
                   className="w-full bg-transparent text-xs focus:outline-none text-slate-700"
                 />
-                {settingsSearchQuery && (
+                {settingsSearchQuery ? (
                   <X
                     onClick={() => setSettingsSearchQuery('')}
-                    className="w-3.5 h-3.5 text-slate-400 hover:text-slate-700 cursor-pointer"
+                    className="w-3.5 h-3.5 text-slate-400 hover:text-slate-700 cursor-pointer shrink-0"
                   />
+                ) : (
+                  <Search className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                 )}
               </div>
             </div>
           ) : (
-            <div className="flex-1 max-w-xl mx-auto">
-              <div className="flex items-center gap-1.5 bg-slate-50 border border-slate-300 focus-within:border-blue-700 focus-within:bg-white rounded-full px-3 py-1 transition">
-                <Search className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                {activeChips.map((chip, idx) => (
-                  <span
-                    key={idx}
-                    className="inline-flex items-center gap-1 bg-blue-50 text-blue-800 border border-blue-200 px-2 py-0.5 rounded-full text-[11px] font-medium"
-                  >
-                    <Filter className="w-2.5 h-2.5 text-blue-700" />
-                    <span>{chip}</span>
-                    <X
-                      onClick={() => setActiveChips(activeChips.filter((_, i) => i !== idx))}
-                      className="w-3 h-3 cursor-pointer hover:text-rose-600"
-                    />
-                  </span>
-                ))}
+            <div className="flex-1 max-w-md mx-auto">
+              <div className="flex items-center gap-2 bg-white border border-slate-300 focus-within:border-[#2e6b7d] rounded px-3 py-1 transition">
                 <input
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder={t('Search invoices, proforma, journal entries, partner...', 'بحث في الفواتير، البروفرما، القيود، الشركاء...')}
+                  placeholder={t('Search...', 'بحث...')}
                   className="w-full bg-transparent text-xs focus:outline-none text-slate-700"
                 />
+                {searchQuery ? (
+                  <X
+                    onClick={() => setSearchQuery('')}
+                    className="w-3.5 h-3.5 text-slate-400 hover:text-slate-700 cursor-pointer shrink-0"
+                  />
+                ) : (
+                  <Search className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                )}
               </div>
             </div>
           )}
@@ -1518,7 +1775,37 @@ export default function App() {
             <div className="flex items-center gap-3 text-xs text-slate-600">
               <span className="font-medium">
                 {activeView === 'invoices'
-                  ? `1-${invoices.length} / ${invoices.length}`
+                  ? `1-${
+                      invoices.filter((inv) => {
+                        const q = searchQuery.toLowerCase();
+                        const matchesSearch =
+                          !searchQuery ||
+                          inv.number.toLowerCase().includes(q) ||
+                          inv.customerEn.toLowerCase().includes(q);
+                        if (!matchesSearch) return false;
+                        if (activeChips.length === 0 || activeChips.includes('All Invoices')) return true;
+                        return activeChips.some((chip) => {
+                          if (chip === 'Cash Invoices') return inv.invoiceSubtype === 'cash';
+                          if (chip === 'Credit Invoices') return inv.invoiceSubtype === 'credit';
+                          if (chip === 'Proforma Only') return inv.status === 'Proforma' || inv.invoiceSubtype === 'proforma';
+                          if (chip === 'Progressive Invoices') return inv.invoiceSubtype === 'progressive';
+                          if (chip === 'Credit Notes') return inv.invoiceSubtype === 'refund' || inv.number.startsWith('RINV') || inv.number.startsWith('CRN');
+                          return true;
+                        });
+                      }).length
+                    } / ${
+                      invoices.filter((inv) => {
+                        if (activeChips.length === 0 || activeChips.includes('All Invoices')) return true;
+                        return activeChips.some((chip) => {
+                          if (chip === 'Cash Invoices') return inv.invoiceSubtype === 'cash';
+                          if (chip === 'Credit Invoices') return inv.invoiceSubtype === 'credit';
+                          if (chip === 'Proforma Only') return inv.status === 'Proforma' || inv.invoiceSubtype === 'proforma';
+                          if (chip === 'Progressive Invoices') return inv.invoiceSubtype === 'progressive';
+                          if (chip === 'Credit Notes') return inv.invoiceSubtype === 'refund' || inv.number.startsWith('RINV') || inv.number.startsWith('CRN');
+                          return true;
+                        });
+                      }).length
+                    }`
                   : (activeView === 'payments' ? `1-${payments.length} / ${payments.length}` : '1-25 / 25')}
               </span>
               <div className="flex items-center border border-slate-200 rounded-md overflow-hidden bg-white">
@@ -2034,21 +2321,55 @@ export default function App() {
               <div className="overflow-x-auto">
                 <table className="w-full text-xs text-start">
                   <thead className="bg-slate-50 text-slate-600 border-b border-slate-200 font-semibold">
-                    <tr>
-                      <th className="py-3 px-4 w-8">
-                        <input type="checkbox" className="rounded border-slate-300" />
-                      </th>
-                      <th className="py-3 px-3 text-start">{t('Number', 'رقم المستند')}</th>
-                      <th className="py-3 px-3 text-start">{t('Customer', 'العميل')}</th>
-                      <th className="py-3 px-3 text-start">{t('Invoice Date', 'تاريخ الفاتورة')}</th>
-                      <th className="py-3 px-3 text-start">{t('Due Date', 'تاريخ الاستحقاق')}</th>
-                      <th className="py-3 px-3 text-start">{t('Force Date', 'تاريخ القيد')}</th>
-                      <th className="py-3 px-3 text-end">{t('Tax Excluded', 'بدون ضريبة')}</th>
-                      <th className="py-3 px-3 text-end">{t('Total', 'الإجمالي')}</th>
-                      <th className="py-3 px-3 text-end">{t('Amount Due', 'المبلغ المستحق')}</th>
-                      <th className="py-3 px-3 text-center">{t('ZATCA / Proforma', 'الزكاة / البروفرما')}</th>
-                      <th className="py-3 px-4 text-center">{t('Status', 'الحالة')}</th>
-                    </tr>
+                    {activeChips.includes('Progressive Invoices') ? (
+                      <tr>
+                        <th className="py-3 px-4 w-8">
+                          <input type="checkbox" className="rounded border-slate-300" />
+                        </th>
+                        <th className="py-3 px-3 text-start">{t('PO Date', 'تاريخ أمر الشراء')}</th>
+                        <th className="py-3 px-3 text-start">{t('Blanket PO Number', 'رقم أمر الشراء المفتوح')}</th>
+                        <th className="py-3 px-3 text-start">{t('Customer', 'العميل')}</th>
+                        <th className="py-3 px-3 text-end">{t('PO Total Amount', 'إجمالي أمر الشراء')}</th>
+                        <th className="py-3 px-3 text-end">{t('Invoiced Amount', 'المبلغ المفوتر')}</th>
+                        <th className="py-3 px-3 text-end">{t('Balance', 'الرصيد المتبقي')}</th>
+                        <th className="py-3 px-3 text-center">{t('Invoice Count', 'عدد الفواتير')}</th>
+                        <th className="py-3 px-4 text-center">{t('State', 'الحالة')}</th>
+                      </tr>
+                    ) : activeChips.includes('Credit Notes') ? (
+                      <tr>
+                        <th className="py-3 px-4 w-8">
+                          <input type="checkbox" className="rounded border-slate-300" />
+                        </th>
+                        <th className="py-3 px-3 text-start">{t('Customer', 'العميل')}</th>
+                        <th className="py-3 px-3 text-start">{t('Invoice Date', 'تاريخ الفاتورة')}</th>
+                        <th className="py-3 px-3 text-start">{t('Number', 'الرقم')}</th>
+                        <th className="py-3 px-3 text-start">{t('Company', 'الشركة')}</th>
+                        <th className="py-3 px-3 text-start">{t('Salesperson', 'مسؤول المبيعات')}</th>
+                        <th className="py-3 px-3 text-start">{t('Due Date', 'تاريخ الاستحقاق')}</th>
+                        <th className="py-3 px-3 text-start">{t('Source Document', 'المستند الأصلي')}</th>
+                        <th className="py-3 px-3 text-end">{t('Tax Excluded', 'بدون ضريبة')}</th>
+                        <th className="py-3 px-3 text-end">{t('Tax', 'الضريبة')}</th>
+                        <th className="py-3 px-3 text-end">{t('Total', 'الإجمالي')}</th>
+                        <th className="py-3 px-3 text-end">{t('Amount Due', 'المبلغ المستحق')}</th>
+                        <th className="py-3 px-4 text-center">{t('Status', 'الحالة')}</th>
+                      </tr>
+                    ) : (
+                      <tr>
+                        <th className="py-3 px-4 w-8">
+                          <input type="checkbox" className="rounded border-slate-300" />
+                        </th>
+                        <th className="py-3 px-3 text-start">{t('Number', 'رقم المستند')}</th>
+                        <th className="py-3 px-3 text-start">{t('Customer', 'العميل')}</th>
+                        <th className="py-3 px-3 text-start">{t('Invoice Date', 'تاريخ الفاتورة')}</th>
+                        <th className="py-3 px-3 text-start">{t('Due Date', 'تاريخ الاستحقاق')}</th>
+                        <th className="py-3 px-3 text-start">{t('Force Date', 'تاريخ القيد')}</th>
+                        <th className="py-3 px-3 text-end">{t('Tax Excluded', 'بدون ضريبة')}</th>
+                        <th className="py-3 px-3 text-end">{t('Total', 'الإجمالي')}</th>
+                        <th className="py-3 px-3 text-end">{t('Amount Due', 'المبلغ المستحق')}</th>
+                        <th className="py-3 px-3 text-center">{t('ZATCA / Proforma', 'الزكاة / البروفرما')}</th>
+                        <th className="py-3 px-4 text-center">{t('Status', 'الحالة')}</th>
+                      </tr>
+                    )}
                   </thead>
                   <tbody className="divide-y divide-slate-100">
                     {invoices
@@ -2056,8 +2377,8 @@ export default function App() {
                         const q = searchQuery.toLowerCase();
                         const matchesSearch =
                           !searchQuery ||
-                          inv.number.toLowerCase().includes(q) ||
-                          inv.customerEn.toLowerCase().includes(q) ||
+                          inv.number?.toLowerCase().includes(q) ||
+                          inv.customerEn?.toLowerCase().includes(q) ||
                           (inv.customerAr && inv.customerAr.includes(searchQuery));
                         if (!matchesSearch) return false;
 
@@ -2068,74 +2389,146 @@ export default function App() {
                           if (chip === 'Credit Invoices') return inv.invoiceSubtype === 'credit';
                           if (chip === 'Proforma Only') return inv.status === 'Proforma' || inv.invoiceSubtype === 'proforma';
                           if (chip === 'Progressive Invoices') return inv.invoiceSubtype === 'progressive';
-                          if (chip === 'Credit Notes') return inv.invoiceSubtype === 'refund' || inv.number.startsWith('RINV');
+                          if (chip === 'Credit Notes') return inv.invoiceSubtype === 'refund' || inv.number?.startsWith('RINV') || inv.number?.startsWith('CRN');
                           if (chip === 'ZATCA Cleared') return inv.zatcaStatus && inv.zatcaStatus.includes('CLEARED');
                           if (chip === 'Posted') return inv.status === 'Posted' || inv.status === 'Paid' || inv.status === 'Partially Paid' || inv.status === 'Sent';
                           return true;
                         });
                       })
-                      .map((inv) => (
-                        <tr
-                          key={inv.id}
-                          onClick={() => {
-                            setSelectedInvoice(inv);
-                          }}
-                          className="hover:bg-blue-50/40 cursor-pointer transition"
-                        >
-                          <td className="py-3 px-4" onClick={(e) => e.stopPropagation()}>
-                            <input type="checkbox" className="rounded border-slate-300" />
-                          </td>
-                          <td className="py-3 px-3">
-                            <div className="font-bold text-slate-900">{inv.number}</div>
-                            <div className="text-[10px] text-slate-400 font-medium">
-                              {inv.invoiceSubtype === 'cash' && t('Cash Invoice', 'فاتورة نقدية')}
-                              {inv.invoiceSubtype === 'credit' && t('Credit Invoice', 'فاتورة آجل')}
-                              {inv.invoiceSubtype === 'proforma' && t('Proforma Invoice', 'فاتورة مبدئية')}
-                              {inv.invoiceSubtype === 'progressive' && t('Progressive Invoice', 'فاتورة إنجاز')}
-                              {inv.invoiceSubtype === 'refund' && t('Credit Note', 'إشعار دائن')}
-                            </div>
-                          </td>
-                          <td className="py-3 px-3 font-medium text-slate-800">
-                            {t(inv.customerEn, inv.customerAr)}
-                          </td>
-                          <td className="py-3 px-3 text-slate-600">{inv.invoiceDate}</td>
-                          <td className="py-3 px-3">
-                            <span
-                              className={`font-semibold ${
-                                inv.dueDateType === 'danger'
-                                  ? 'text-rose-600'
-                                  : inv.dueDateType === 'warning'
-                                  ? 'text-amber-600'
-                                  : 'text-slate-600'
-                              }`}
+                      .map((inv) => {
+                        if (activeChips.includes('Progressive Invoices')) {
+                          return (
+                            <tr
+                              key={inv.id}
+                              onClick={() => setSelectedInvoice(inv)}
+                              className="hover:bg-blue-50/40 cursor-pointer transition"
                             >
-                              {inv.dueDateText}
-                            </span>
-                          </td>
-                          <td className="py-3 px-3 font-mono text-[11px] text-blue-700">{inv.forceDate}</td>
-                          <td className="py-3 px-3 text-end text-slate-700">
-                            SAR {inv.taxExcluded.toLocaleString('en-US', { minimumFractionDigits: 2 })}
-                          </td>
-                          <td className="py-3 px-3 text-end font-bold text-slate-900">
-                            SAR {inv.total.toLocaleString('en-US', { minimumFractionDigits: 2 })}
-                          </td>
-                          <td className="py-3 px-3 text-end font-semibold text-slate-800">
-                            SAR {inv.amountDue.toLocaleString('en-US', { minimumFractionDigits: 2 })}
-                          </td>
-                          <td className="py-3 px-3 text-center">
-                            <span
-                              className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded ${
-                                inv.status === 'Proforma'
-                                  ? 'bg-indigo-50 text-indigo-700 border border-indigo-200'
-                                  : 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                              }`}
+                              <td className="py-3 px-4" onClick={(e) => e.stopPropagation()}>
+                                <input type="checkbox" className="rounded border-slate-300" />
+                              </td>
+                              <td className="py-3 px-3 font-medium text-slate-700">{inv.poDate || inv.invoiceDate}</td>
+                              <td className="py-3 px-3 font-semibold text-slate-900">{inv.blanketPoNumber || inv.number}</td>
+                              <td className="py-3 px-3 font-medium text-slate-800">{t(inv.customerEn, inv.customerAr)}</td>
+                              <td className="py-3 px-3 text-end font-medium text-slate-700">
+                                {(inv.poTotalAmount || inv.total).toLocaleString('en-US', { minimumFractionDigits: 2 })} SR
+                              </td>
+                              <td className="py-3 px-3 text-end font-medium text-slate-700">
+                                {(inv.invoicedAmount || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })} SR
+                              </td>
+                              <td className="py-3 px-3 text-end font-semibold text-slate-900">
+                                {(inv.balance || inv.amountDue).toLocaleString('en-US', { minimumFractionDigits: 2 })} SR
+                              </td>
+                              <td className="py-3 px-3 text-center font-mono font-medium text-slate-700">{inv.invoiceCount || 1}</td>
+                              <td className="py-3 px-4 text-center">
+                                <span className="text-xs font-medium text-slate-700">
+                                  {inv.status || 'Approved'}
+                                </span>
+                              </td>
+                            </tr>
+                          );
+                        }
+
+                        if (activeChips.includes('Credit Notes')) {
+                          return (
+                            <tr
+                              key={inv.id}
+                              onClick={() => setSelectedInvoice(inv)}
+                              className="hover:bg-blue-50/40 cursor-pointer transition"
                             >
-                              {inv.zatcaStatus}
-                            </span>
-                          </td>
-                          <td className="py-3 px-4 text-center">{renderStatusPill(inv.status)}</td>
-                        </tr>
-                      ))}
+                              <td className="py-3 px-4" onClick={(e) => e.stopPropagation()}>
+                                <input type="checkbox" className="rounded border-slate-300" />
+                              </td>
+                              <td className="py-3 px-3 font-medium text-slate-800">{t(inv.customerEn, inv.customerAr)}</td>
+                              <td className="py-3 px-3 text-slate-600">{inv.invoiceDate}</td>
+                              <td className="py-3 px-3 font-bold text-slate-900">{inv.number}</td>
+                              <td className="py-3 px-3 text-slate-600">{inv.companyName || 'Flames of Al-Yamama Hydraulic Co'}</td>
+                              <td className="py-3 px-3 text-slate-600">{inv.salesperson || 'Administrator'}</td>
+                              <td className="py-3 px-3 text-slate-600">{inv.dueDateText || inv.invoiceDate}</td>
+                              <td className="py-3 px-3 text-slate-600 font-mono text-[11px]">{inv.sourceDocument || '-'}</td>
+                              <td className="py-3 px-3 text-end text-slate-700">
+                                {inv.taxExcluded.toLocaleString('en-US', { minimumFractionDigits: 2 })} SR
+                              </td>
+                              <td className="py-3 px-3 text-end text-slate-700">
+                                {(inv.tax !== undefined ? inv.tax : (inv.taxExcluded * 0.15)).toLocaleString('en-US', { minimumFractionDigits: 2 })} SR
+                              </td>
+                              <td className="py-3 px-3 text-end font-bold text-slate-900">
+                                {inv.total.toLocaleString('en-US', { minimumFractionDigits: 2 })} SR
+                              </td>
+                              <td className="py-3 px-3 text-end font-semibold text-slate-800">
+                                {inv.amountDue.toLocaleString('en-US', { minimumFractionDigits: 2 })} SR
+                              </td>
+                              <td className="py-3 px-4 text-center">
+                                <span className="text-xs font-medium text-slate-700">
+                                  {inv.status || 'Paid'}
+                                </span>
+                              </td>
+                            </tr>
+                          );
+                        }
+
+                        return (
+                          <tr
+                            key={inv.id}
+                            onClick={() => {
+                              setSelectedInvoice(inv);
+                            }}
+                            className="hover:bg-blue-50/40 cursor-pointer transition"
+                          >
+                            <td className="py-3 px-4" onClick={(e) => e.stopPropagation()}>
+                              <input type="checkbox" className="rounded border-slate-300" />
+                            </td>
+                            <td className="py-3 px-3">
+                              <div className="font-bold text-slate-900">{inv.number}</div>
+                              <div className="text-[10px] text-slate-400 font-medium">
+                                {inv.invoiceSubtype === 'cash' && t('Cash Invoice', 'فاتورة نقدية')}
+                                {inv.invoiceSubtype === 'credit' && t('Credit Invoice', 'فاتورة آجل')}
+                                {inv.invoiceSubtype === 'proforma' && t('Proforma Invoice', 'فاتورة مبدئية')}
+                                {inv.invoiceSubtype === 'progressive' && t('Progressive Invoice', 'فاتورة إنجاز')}
+                                {inv.invoiceSubtype === 'refund' && t('Credit Note', 'إشعار دائن')}
+                              </div>
+                            </td>
+                            <td className="py-3 px-3 font-medium text-slate-800">
+                              {t(inv.customerEn, inv.customerAr)}
+                            </td>
+                            <td className="py-3 px-3 text-slate-600">{inv.invoiceDate}</td>
+                            <td className="py-3 px-3">
+                              <span
+                                className={`font-semibold ${
+                                  inv.dueDateType === 'danger'
+                                    ? 'text-rose-600'
+                                    : inv.dueDateType === 'warning'
+                                    ? 'text-amber-600'
+                                    : 'text-slate-600'
+                                }`}
+                              >
+                                {inv.dueDateText}
+                              </span>
+                            </td>
+                            <td className="py-3 px-3 font-mono text-[11px] text-blue-700">{inv.forceDate}</td>
+                            <td className="py-3 px-3 text-end text-slate-700">
+                              SAR {inv.taxExcluded.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                            </td>
+                            <td className="py-3 px-3 text-end font-bold text-slate-900">
+                              SAR {inv.total.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                            </td>
+                            <td className="py-3 px-3 text-end font-semibold text-slate-800">
+                              SAR {inv.amountDue.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                            </td>
+                            <td className="py-3 px-3 text-center">
+                              <span
+                                className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded ${
+                                  inv.status === 'Proforma'
+                                    ? 'bg-indigo-50 text-indigo-700 border border-indigo-200'
+                                    : 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                                }`}
+                              >
+                                {inv.zatcaStatus}
+                              </span>
+                            </td>
+                            <td className="py-3 px-4 text-center">{renderStatusPill(inv.status)}</td>
+                          </tr>
+                        );
+                      })}
                   </tbody>
                 </table>
               </div>
@@ -2144,10 +2537,48 @@ export default function App() {
           )}
 
           {/* ===============================================================
-              VIEW C: ACCOUNTING -> JOURNAL ENTRIES (SCREENSHOT 1/3/7 TABLE)
+              VIEW C: ACCOUNTING -> JOURNAL ENTRIES (SCREENSHOT 1/3/7 TABLE & FORM)
              =============================================================== */}
           {activeView === 'journal_entries' && (
-            <div className="space-y-4">
+            selectedJeRecord ? (
+              <JournalEntryFormView
+                entry={selectedJeRecord}
+                onBack={() => setSelectedJeRecord(null)}
+                onSave={(updated) => {
+                  setJournalEntries(journalEntries.map((j) => (j.id === updated.id ? updated : j)));
+                  setSelectedJeRecord(updated);
+                }}
+                onPost={(id) => {
+                  setJournalEntries(journalEntries.map((j) => (j.id === id ? { ...j, status: 'Posted' } : j)));
+                  setSelectedJeRecord((prev) => (prev ? { ...prev, status: 'Posted' } : null));
+                }}
+                onReverse={(entry) => {
+                  const rev = {
+                    ...entry,
+                    id: `JE-REV-${Date.now()}`,
+                    number: `REV/${entry.number}`,
+                    ref: `Reversal of ${entry.number}`,
+                    status: 'Draft',
+                    items: (entry.items || []).map((it, idx) => ({
+                      ...it,
+                      id: Date.now() + idx,
+                      debit: it.credit,
+                      credit: it.debit,
+                    })),
+                  };
+                  setJournalEntries([rev, ...journalEntries]);
+                  setSelectedJeRecord(rev);
+                }}
+                onCancel={(id) => {
+                  setJournalEntries(journalEntries.map((j) => (j.id === id ? { ...j, status: 'Cancelled' } : j)));
+                  setSelectedJeRecord((prev) => (prev ? { ...prev, status: 'Cancelled' } : null));
+                }}
+                allEntries={journalEntries}
+                onSelectEntry={setSelectedJeRecord}
+                t={t}
+                isRtl={isRtl}
+              />
+            ) : (
               <div className="bg-white rounded-xl border border-slate-200 shadow-2xs overflow-hidden">
                 <div className="overflow-x-auto">
                   <table className="w-full text-xs text-start">
@@ -2194,68 +2625,7 @@ export default function App() {
                   </table>
                 </div>
               </div>
-
-              {/* Selected Journal Entry Balanced Lines Drawer */}
-              {selectedJeRecord && (
-                <div className="bg-white rounded-xl border-2 border-blue-700 p-5 shadow-lg space-y-3">
-                  <div className="flex items-center justify-between border-b border-slate-200 pb-3">
-                    <div>
-                      <span className="text-[11px] font-bold uppercase text-blue-700">
-                        {selectedJeRecord.journal} • {selectedJeRecord.company}
-                      </span>
-                      <h3 className="text-base font-extrabold text-slate-900">
-                        {selectedJeRecord.number} — {selectedJeRecord.ref}
-                      </h3>
-                    </div>
-                    <button
-                      onClick={() => setSelectedJeRecord(null)}
-                      className="px-2.5 py-1 rounded bg-slate-100 hover:bg-slate-200 text-xs font-semibold"
-                    >
-                      {t('Close Lines', 'إغلاق التفاصيل')}
-                    </button>
-                  </div>
-                  <table className="w-full text-xs">
-                    <thead className="bg-slate-50 text-slate-600 border-b border-slate-200">
-                      <tr>
-                        <th className="py-2 px-3 text-start">GL Account</th>
-                        <th className="py-2 px-3 text-start">Partner</th>
-                        <th className="py-2 px-3 text-start">Analytic Cost Centre</th>
-                        <th className="py-2 px-3 text-end">Debit (SAR)</th>
-                        <th className="py-2 px-3 text-end">Credit (SAR)</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-100">
-                      <tr>
-                        <td className="py-2 px-3 font-mono font-bold text-blue-800">
-                          {selectedJeRecord.type === 'INVENTORY'
-                            ? '113101 — Inventory Valuation Account'
-                            : '112101 — Accounts Receivable / Asset'}
-                        </td>
-                        <td className="py-2 px-3">{selectedJeRecord.partner}</td>
-                        <td className="py-2 px-3">CC-101 Workshop Operations</td>
-                        <td className="py-2 px-3 text-end font-bold">
-                          {selectedJeRecord.total.toLocaleString('en-US', { minimumFractionDigits: 2 })}
-                        </td>
-                        <td className="py-2 px-3 text-end">0.00</td>
-                      </tr>
-                      <tr>
-                        <td className="py-2 px-3 font-mono font-bold text-blue-800">
-                          {selectedJeRecord.type === 'INVENTORY'
-                            ? '113901 — Stock Interim Account (Received)'
-                            : '411101 — Revenue / Payable Counter Account'}
-                        </td>
-                        <td className="py-2 px-3">{selectedJeRecord.partner}</td>
-                        <td className="py-2 px-3">CC-101 Workshop Operations</td>
-                        <td className="py-2 px-3 text-end">0.00</td>
-                        <td className="py-2 px-3 text-end font-bold">
-                          {selectedJeRecord.total.toLocaleString('en-US', { minimumFractionDigits: 2 })}
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              )}
-            </div>
+            )
           )}
 
           {/* ===============================================================
@@ -2430,109 +2800,458 @@ export default function App() {
           )}
 
           {/* ===============================================================
-              VIEW G: PAYMENTS & VOUCHERS (ODOO 12 account.payment)
+              VIEW G: PAYMENTS & VOUCHERS (ODOO 12 account.payment FORM & LIST)
              =============================================================== */}
           {activeView === 'payments' && (
-            <div className="bg-white rounded-xl border border-slate-200 p-5 shadow-2xs space-y-4">
-              <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 pb-3">
-                <div>
-                  <span className="text-[11px] font-bold uppercase text-blue-700">
-                    {t('Active Company:', 'الشركة النشطة:')} {t(activeCompanyObj.nameEn, activeCompanyObj.nameAr)}
-                  </span>
-                  <h2 className="text-base font-extrabold text-slate-900">
-                    {activeChips.includes('Vendor Payments')
-                      ? t('Supplier Payments & Outbound Vouchers', 'سندات صرف الموردين والتحويلات المصرفية')
-                      : t('Customer Payments, Cheques & Inbound Vouchers', 'سندات قبض العملاء والشيكات الواردة')}
-                  </h2>
+            selectedPayment ? (
+              <PaymentFormView
+                payment={selectedPayment}
+                onBack={() => setSelectedPayment(null)}
+                onSave={(updated) => {
+                  setPayments(payments.map((p) => (p.id === updated.id ? updated : p)));
+                  setSelectedPayment(updated);
+                }}
+                onPost={(id) => {
+                  setPayments(payments.map((p) => (p.id === id ? { ...p, status: 'Posted' } : p)));
+                  setSelectedPayment((prev) => (prev ? { ...prev, status: 'Posted' } : null));
+                }}
+                onReconcile={(id) => {
+                  setPayments(payments.map((p) => (p.id === id ? { ...p, status: 'Reconciled' } : p)));
+                  setSelectedPayment((prev) => (prev ? { ...prev, status: 'Reconciled' } : null));
+                }}
+                allPayments={payments}
+                onSelectPayment={setSelectedPayment}
+                t={t}
+                isRtl={isRtl}
+              />
+            ) : (
+              <div className="bg-white rounded-xl border border-slate-200 p-5 shadow-2xs space-y-4">
+                <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 pb-3">
+                  <div>
+                    <span className="text-[11px] font-bold uppercase text-blue-700">
+                      {t('Active Company:', 'الشركة النشطة:')} {t(activeCompanyObj.nameEn, activeCompanyObj.nameAr)}
+                    </span>
+                    <h2 className="text-base font-extrabold text-slate-900">
+                      {activeChips.includes('Vendor Payments')
+                        ? t('Supplier Payments & Outbound Vouchers', 'سندات صرف الموردين والتحويلات المصرفية')
+                        : t('Customer Payments, Cheques & Inbound Vouchers', 'سندات قبض العملاء والشيكات الواردة')}
+                    </h2>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => {
+                        const isVendorPay = activeChips.includes('Vendor Payments');
+                        setSelectedPayment({
+                          id: `PAY-${Date.now()}`,
+                          number: 'Draft Payment',
+                          isNew: true,
+                          paymentType: isVendorPay ? 'send' : 'receive',
+                          partner: '',
+                          amount: 0,
+                          date: new Date().toISOString().split('T')[0],
+                          journal: 'Al Rajhi Corporate Bank SAR (111101)',
+                          paymentMethod: 'Electronic Bank Transfer (SARIE / SADAD)',
+                          memo: '',
+                          status: 'Draft',
+                        });
+                      }}
+                      className="px-3.5 py-1.5 rounded-md bg-[#2e6b7d] hover:bg-[#235361] text-white font-semibold text-xs shadow-xs transition flex items-center gap-1.5 cursor-pointer"
+                    >
+                      <Plus className="w-3.5 h-3.5" />
+                      <span>{t('Register New Payment', 'تسجيل دفعة جديدة')}</span>
+                    </button>
+                    <button
+                      onClick={() => setActiveView('dashboard')}
+                      className="px-3 py-1.5 rounded-md bg-slate-100 hover:bg-slate-200 text-xs font-semibold text-slate-700 cursor-pointer"
+                    >
+                      {t('Back to Dashboard', 'العودة للوحة التحكم')}
+                    </button>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={() => {
-                      const isVendorPay = activeChips.includes('Vendor Payments');
-                      setPaymentCreateDefaults({
-                        type: isVendorPay ? 'send' : 'receive',
-                        partner: '',
-                        amount: 25000,
-                        memo: '',
-                        invoiceId: null,
-                      });
-                      setPaymentCreateOpen(true);
-                    }}
-                    className="px-3.5 py-1.5 rounded-md bg-blue-700 hover:bg-blue-800 text-white font-semibold text-xs shadow-xs transition flex items-center gap-1.5"
-                  >
-                    <Plus className="w-3.5 h-3.5" />
-                    <span>{t('Register New Payment', 'تسجيل دفعة جديدة')}</span>
-                  </button>
-                  <button
-                    onClick={() => setActiveView('dashboard')}
-                    className="px-3 py-1.5 rounded-md bg-slate-100 hover:bg-slate-200 text-xs font-semibold text-slate-700"
-                  >
-                    {t('Back to Dashboard', 'العودة للوحة التحكم')}
-                  </button>
+
+                {/* Payments Table */}
+                <div className="overflow-x-auto">
+                  <table className="w-full text-xs">
+                    <thead className="bg-slate-50 text-slate-600 border-b border-slate-200">
+                      <tr>
+                        <th className="py-2.5 px-4 text-start">{t('Payment Number', 'رقم الدفعة')}</th>
+                        <th className="py-2.5 px-4 text-start">{t('Date', 'التاريخ')}</th>
+                        <th className="py-2.5 px-4 text-start">{t('Partner', 'الشريك / المستفيد')}</th>
+                        <th className="py-2.5 px-4 text-start">{t('Journal / Bank', 'دفتر اليومية / البنك')}</th>
+                        <th className="py-2.5 px-4 text-start">{t('Payment Method / Ref', 'طريقة السداد / الشيك')}</th>
+                        <th className="py-2.5 px-4 text-end">{t('Amount (SAR)', 'المبلغ')}</th>
+                        <th className="py-2.5 px-4 text-center">{t('Status', 'الحالة')}</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100">
+                      {payments
+                        .filter((p) => {
+                          if (activeChips.includes('Vendor Payments')) return p.paymentType === 'send';
+                          if (activeChips.includes('Customer Payments')) return p.paymentType === 'receive';
+                          return true;
+                        })
+                        .map((p) => (
+                          <tr
+                            key={p.id}
+                            className="hover:bg-blue-50/40 cursor-pointer transition"
+                            onClick={() => setSelectedPayment(p)}
+                          >
+                            <td className="py-3 px-4 font-mono font-bold text-blue-800 flex items-center gap-2">
+                              <CreditCard className="w-3.5 h-3.5 text-blue-700 shrink-0" />
+                              <span>{p.number}</span>
+                            </td>
+                            <td className="py-3 px-4 font-medium text-slate-600">{p.date}</td>
+                            <td className="py-3 px-4 font-bold text-slate-900">{p.partner}</td>
+                            <td className="py-3 px-4 text-slate-600">{p.journal}</td>
+                            <td className="py-3 px-4">
+                              <div className="text-slate-800 font-medium">{p.paymentMethod}</div>
+                              {p.chequeNo && (
+                                <div className="font-mono text-[11px] text-blue-700">{p.chequeNo}</div>
+                              )}
+                            </td>
+                            <td className="py-3 px-4 text-end font-mono font-bold text-slate-900">
+                              SAR {Number(p.amount).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                            </td>
+                            <td className="py-3 px-4 text-center">
+                              {renderStatusPill(p.status)}
+                            </td>
+                          </tr>
+                        ))}
+                    </tbody>
+                  </table>
                 </div>
               </div>
+            )
+          )}
 
-              {/* Payments Table */}
+          {/* ===============================================================
+              VIEW H: JOURNAL ITEMS (ODOO 12 account.move.line)
+             =============================================================== */}
+          {activeView === 'journal_items' && (
+            <div className="bg-white rounded-xl border border-slate-200 shadow-2xs overflow-hidden">
               <div className="overflow-x-auto">
-                <table className="w-full text-xs">
-                  <thead className="bg-slate-50 text-slate-600 border-b border-slate-200">
+                <table className="w-full text-xs text-start">
+                  <thead className="bg-slate-50 text-slate-600 border-b border-slate-200 font-semibold">
                     <tr>
-                      <th className="py-2.5 px-4 text-start">{t('Payment Number', 'رقم الدفعة')}</th>
-                      <th className="py-2.5 px-4 text-start">{t('Date', 'التاريخ')}</th>
-                      <th className="py-2.5 px-4 text-start">{t('Partner', 'الشريك / المستفيد')}</th>
-                      <th className="py-2.5 px-4 text-start">{t('Journal / Bank', 'دفتر اليومية / البنك')}</th>
-                      <th className="py-2.5 px-4 text-start">{t('Payment Method / Ref', 'طريقة السداد / الشيك')}</th>
-                      <th className="py-2.5 px-4 text-end">{t('Amount (SAR)', 'المبلغ')}</th>
-                      <th className="py-2.5 px-4 text-center">{t('Status', 'الحالة')}</th>
+                      <th className="py-3 px-4 w-8"><input type="checkbox" className="rounded border-slate-300" /></th>
+                      <th className="py-3 px-3 text-start">{t('Date', 'التاريخ')}</th>
+                      <th className="py-3 px-3 text-start">{t('Journal Entry', 'قيد اليومية')}</th>
+                      <th className="py-3 px-3 text-start">{t('Journal', 'اليومية')}</th>
+                      <th className="py-3 px-3 text-start">{t('Partner', 'الشريك')}</th>
+                      <th className="py-3 px-3 text-start">{t('Account', 'الحساب')}</th>
+                      <th className="py-3 px-3 text-start">{t('Label', 'البيان')}</th>
+                      <th className="py-3 px-3 text-start">{t('Analytic Account', 'الحساب التحليلي')}</th>
+                      <th className="py-3 px-3 text-end">{t('Debit', 'مدين')}</th>
+                      <th className="py-3 px-3 text-end">{t('Credit', 'دائن')}</th>
+                      <th className="py-3 px-3 text-end">{t('Balance', 'الرصيد')}</th>
+                      <th className="py-3 px-4 text-center">{t('Matching', 'المطابقة')}</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100">
-                    {payments
-                      .filter((p) => {
-                        if (activeChips.includes('Vendor Payments')) return p.paymentType === 'send';
-                        if (activeChips.includes('Customer Payments')) return p.paymentType === 'receive';
+                    {journalItems.map((item) => (
+                      <tr
+                        key={item.id}
+                        onClick={() => {
+                          const je = journalEntries.find((j) => j.number === item.moveName);
+                          if (je) {
+                            setSelectedJeRecord(je);
+                            setActiveView('journal_entries');
+                          }
+                        }}
+                        className="hover:bg-blue-50/40 cursor-pointer transition"
+                      >
+                        <td className="py-3 px-4" onClick={(e) => e.stopPropagation()}>
+                          <input type="checkbox" className="rounded border-slate-300" />
+                        </td>
+                        <td className="py-3 px-3 text-slate-600">{item.date}</td>
+                        <td className="py-3 px-3 font-bold text-blue-700 hover:underline">{item.moveName}</td>
+                        <td className="py-3 px-3 text-slate-600">{item.journal}</td>
+                        <td className="py-3 px-3 font-medium text-slate-800">{item.partner}</td>
+                        <td className="py-3 px-3 font-mono text-[11px] text-slate-800">{item.account}</td>
+                        <td className="py-3 px-3 text-slate-600">{item.name}</td>
+                        <td className="py-3 px-3 text-slate-700 font-medium">{item.analytic || '-'}</td>
+                        <td className="py-3 px-3 text-end font-mono font-medium text-slate-800">
+                          {item.debit > 0 ? item.debit.toLocaleString('en-US', { minimumFractionDigits: 2 }) : '-'}
+                        </td>
+                        <td className="py-3 px-3 text-end font-mono font-medium text-slate-800">
+                          {item.credit > 0 ? item.credit.toLocaleString('en-US', { minimumFractionDigits: 2 }) : '-'}
+                        </td>
+                        <td className="py-3 px-3 text-end font-mono font-bold text-slate-900">
+                          {(item.debit - item.credit).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                        </td>
+                        <td className="py-3 px-4 text-center">
+                          <span className={`text-[10px] font-semibold px-2 py-0.5 rounded ${item.matched ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-slate-100 text-slate-600'}`}>
+                            {item.matched ? 'Reconciled' : 'Open'}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {/* ===============================================================
+              VIEW I: ANALYTIC ITEMS (ODOO 12 account.analytic.line)
+             =============================================================== */}
+          {activeView === 'analytic_items' && (
+            <div className="bg-white rounded-xl border border-slate-200 shadow-2xs overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="w-full text-xs text-start">
+                  <thead className="bg-slate-50 text-slate-600 border-b border-slate-200 font-semibold">
+                    <tr>
+                      <th className="py-3 px-4 w-8"><input type="checkbox" className="rounded border-slate-300" /></th>
+                      <th className="py-3 px-3 text-start">{t('Date', 'التاريخ')}</th>
+                      <th className="py-3 px-3 text-start">{t('Description', 'الوصف')}</th>
+                      <th className="py-3 px-3 text-start">{t('Analytic Account', 'الحساب التحليلي')}</th>
+                      <th className="py-3 px-3 text-start">{t('Partner', 'الشريك')}</th>
+                      <th className="py-3 px-3 text-start">{t('User', 'المستخدم')}</th>
+                      <th className="py-3 px-3 text-start">{t('Cost Center Tag', 'وسم مركز التكلفة')}</th>
+                      <th className="py-3 px-4 text-end">{t('Amount (SAR)', 'المبلغ')}</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100">
+                    {analyticItems.map((item) => (
+                      <tr key={item.id} className="hover:bg-blue-50/40 cursor-pointer transition">
+                        <td className="py-3 px-4" onClick={(e) => e.stopPropagation()}>
+                          <input type="checkbox" className="rounded border-slate-300" />
+                        </td>
+                        <td className="py-3 px-3 text-slate-600">{item.date}</td>
+                        <td className="py-3 px-3 font-medium text-slate-900">{item.name}</td>
+                        <td className="py-3 px-3 font-semibold text-blue-700">{item.account}</td>
+                        <td className="py-3 px-3 text-slate-700">{item.partner}</td>
+                        <td className="py-3 px-3 text-slate-600">{item.user}</td>
+                        <td className="py-3 px-3">
+                          <span className="text-[10px] bg-slate-100 text-slate-700 px-2 py-0.5 rounded font-mono">
+                            {item.tag || 'CC-OPS'}
+                          </span>
+                        </td>
+                        <td className={`py-3 px-4 text-end font-mono font-bold ${item.amount < 0 ? 'text-rose-600' : 'text-emerald-700'}`}>
+                          {item.amount.toLocaleString('en-US', { minimumFractionDigits: 2 })} SAR
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {/* ===============================================================
+              VIEW J: ASSETS & ASSET RENTAL (om_account_asset & extended)
+             =============================================================== */}
+          {activeView === 'assets' && (
+            <AssetsManagementView
+              viewType="assets"
+              activeChip={activeChips[0]}
+              t={t}
+              isRtl={isRtl}
+            />
+          )}
+
+          {activeView === 'asset_rental' && (
+            <AssetsManagementView
+              viewType="rental"
+              t={t}
+              isRtl={isRtl}
+            />
+          )}
+
+          {/* ===============================================================
+              VIEW K: RECONCILIATION
+             =============================================================== */}
+          {activeView === 'reconciliation' && (
+            <ReconciliationView
+              t={t}
+              isRtl={isRtl}
+            />
+          )}
+
+          {/* ===============================================================
+              VIEW L: TAX ADJUSTMENTS
+             =============================================================== */}
+          {activeView === 'tax_adjustments' && (
+            <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-2xs space-y-5 max-w-[1200px] mx-auto text-xs">
+              <div className="flex items-center justify-between border-b border-slate-200 pb-4">
+                <div>
+                  <span className="text-[11px] font-bold uppercase text-blue-700">Accounting / Actions</span>
+                  <h2 className="text-lg font-bold text-slate-900 mt-0.5">{t('Tax Adjustments (ZATCA VAT 15%)', 'تسويات الضرائب والربط مع هيئة الزكاة')}</h2>
+                  <p className="text-slate-500 text-xs mt-0.5">{t('Record manual adjustments to Output VAT or Input VAT for the current tax period.', 'تسجيل التسويات اليدوية على ضريبة المخرجات أو المدخلات للفترة الضريبية الحالية.')}</p>
+                </div>
+                <span className="text-xs font-mono font-bold bg-blue-50 text-blue-700 border border-blue-200 px-2.5 py-1 rounded">
+                  Active Period: Q4 2026
+                </span>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-slate-50 p-4 rounded-lg border border-slate-200">
+                <div className="space-y-3">
+                  <div>
+                    <label className="font-semibold text-slate-700 block mb-1">{t('Adjustment Reason', 'سبب التسوية')}</label>
+                    <input
+                      type="text"
+                      defaultValue="Annual Input VAT Pro-Rata Re-calculation & Rounding Adjustment"
+                      className="w-full border border-slate-300 rounded px-3 py-1.5 bg-white text-xs"
+                    />
+                  </div>
+                  <div>
+                    <label className="font-semibold text-slate-700 block mb-1">{t('Debit Account', 'حساب المدين')}</label>
+                    <select className="w-full border border-slate-300 rounded px-3 py-1.5 bg-white text-xs">
+                      <option>214101 — VAT 15% (Tax Output Clearance)</option>
+                      <option>114101 — VAT Recoverable (Input Tax)</option>
+                      <option>521101 — Tax Adjustment Expense Account</option>
+                    </select>
+                  </div>
+                </div>
+                <div className="space-y-3">
+                  <div>
+                    <label className="font-semibold text-slate-700 block mb-1">{t('Credit Account', 'حساب الدائن')}</label>
+                    <select className="w-full border border-slate-300 rounded px-3 py-1.5 bg-white text-xs">
+                      <option>521101 — Tax Adjustment Expense Account</option>
+                      <option>214101 — VAT 15% (Tax Output Clearance)</option>
+                      <option>114101 — VAT Recoverable (Input Tax)</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="font-semibold text-slate-700 block mb-1">{t('Adjustment Amount (SAR)', 'مبلغ التسوية')}</label>
+                    <input
+                      type="number"
+                      defaultValue="3450.00"
+                      className="w-full border border-slate-300 rounded px-3 py-1.5 bg-white font-mono font-bold text-xs"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex justify-end gap-2 pt-2 border-t border-slate-200">
+                <button
+                  onClick={() => {
+                    alert(t('Tax adjustment entry successfully posted to General Ledger.', 'تم ترحيل قيد التسوية الضريبية إلى دفتر الأستاذ بنجاح.'));
+                    setActiveView('journal_entries');
+                  }}
+                  className="px-4 py-2 rounded bg-[#2e6b7d] hover:bg-[#235361] text-white font-semibold text-xs shadow-2xs cursor-pointer"
+                >
+                  {t('Post Tax Adjustment', 'اعتماد وترحيل التسوية')}
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* ===============================================================
+              VIEW M: INTERNAL VOUCHERS (account_voucher_extension)
+             =============================================================== */}
+          {activeView === 'internal_voucher' && (
+            <div className="bg-white rounded-xl border border-slate-200 shadow-2xs overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="w-full text-xs text-start">
+                  <thead className="bg-slate-50 text-slate-600 border-b border-slate-200 font-semibold">
+                    <tr>
+                      <th className="py-3 px-4 w-8"><input type="checkbox" className="rounded border-slate-300" /></th>
+                      <th className="py-3 px-3 text-start">{t('Voucher Number', 'رقم السند')}</th>
+                      <th className="py-3 px-3 text-start">{t('Type', 'النوع')}</th>
+                      <th className="py-3 px-3 text-start">{t('Date', 'التاريخ')}</th>
+                      <th className="py-3 px-3 text-start">{t('Partner', 'الشريك / المستفيد')}</th>
+                      <th className="py-3 px-3 text-start">{t('Journal', 'دفتر اليومية')}</th>
+                      <th className="py-3 px-3 text-start">{t('Memo / Purpose', 'البيان')}</th>
+                      <th className="py-3 px-3 text-end">{t('Amount (SAR)', 'المبلغ')}</th>
+                      <th className="py-3 px-4 text-center">{t('Status', 'الحالة')}</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100">
+                    {vouchers
+                      .filter((v) => {
+                        if (activeChips.includes('Customer Receipts')) return v.type === 'receipt';
+                        if (activeChips.includes('Vendor Vouchers')) return v.type === 'payment';
                         return true;
                       })
-                      .map((p) => (
-                        <tr
-                          key={p.id}
-                          className="hover:bg-blue-50/40 cursor-pointer transition"
-                          onClick={() => {
-                            setPaymentCreateDefaults({
-                              type: p.paymentType,
-                              partner: p.partner,
-                              amount: p.amount,
-                              memo: p.memo,
-                              invoiceId: null,
-                            });
-                            setPaymentCreateOpen(true);
-                          }}
-                        >
-                          <td className="py-3 px-4 font-mono font-bold text-blue-800 flex items-center gap-2">
-                            <CreditCard className="w-3.5 h-3.5 text-blue-700 shrink-0" />
-                            <span>{p.number}</span>
+                      .map((v) => (
+                        <tr key={v.id} className="hover:bg-blue-50/40 cursor-pointer transition">
+                          <td className="py-3 px-4" onClick={(e) => e.stopPropagation()}>
+                            <input type="checkbox" className="rounded border-slate-300" />
                           </td>
-                          <td className="py-3 px-4 font-medium text-slate-600">{p.date}</td>
-                          <td className="py-3 px-4 font-bold text-slate-900">{p.partner}</td>
-                          <td className="py-3 px-4 text-slate-600">{p.journal}</td>
-                          <td className="py-3 px-4">
-                            <div className="text-slate-800 font-medium">{p.paymentMethod}</div>
-                            {p.chequeNo && (
-                              <div className="font-mono text-[11px] text-blue-700">{p.chequeNo}</div>
-                            )}
+                          <td className="py-3 px-3 font-bold text-slate-900 font-mono">{v.number}</td>
+                          <td className="py-3 px-3">
+                            <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${v.type === 'receipt' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-rose-50 text-rose-700 border border-rose-200'}`}>
+                              {v.type === 'receipt' ? t('Receipt Voucher', 'سند قبض') : t('Payment Voucher', 'سند صرف')}
+                            </span>
                           </td>
-                          <td className="py-3 px-4 text-end font-mono font-bold text-slate-900">
-                            SAR {Number(p.amount).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                          <td className="py-3 px-3 text-slate-600">{v.date}</td>
+                          <td className="py-3 px-3 font-medium text-slate-800">{v.partner}</td>
+                          <td className="py-3 px-3 text-slate-600">{v.journal}</td>
+                          <td className="py-3 px-3 text-slate-600">{v.memo}</td>
+                          <td className="py-3 px-3 text-end font-mono font-bold text-slate-900">
+                            {v.amount.toLocaleString('en-US', { minimumFractionDigits: 2 })} SR
                           </td>
-                          <td className="py-3 px-4 text-center">
-                            {renderStatusPill(p.status)}
-                          </td>
+                          <td className="py-3 px-4 text-center">{renderStatusPill(v.status)}</td>
                         </tr>
                       ))}
                   </tbody>
                 </table>
               </div>
             </div>
+          )}
+
+          {/* ===============================================================
+              VIEW N: PRODUCTS CATALOG (Sellable & Purchasable)
+             =============================================================== */}
+          {activeView === 'products' && (
+            <div className="bg-white rounded-xl border border-slate-200 shadow-2xs overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="w-full text-xs text-start">
+                  <thead className="bg-slate-50 text-slate-600 border-b border-slate-200 font-semibold">
+                    <tr>
+                      <th className="py-3 px-4 w-8"><input type="checkbox" className="rounded border-slate-300" /></th>
+                      <th className="py-3 px-3 text-start">{t('Internal Ref', 'الرمز الداخلي')}</th>
+                      <th className="py-3 px-3 text-start">{t('Product Name', 'اسم المنتج أو الخدمة')}</th>
+                      <th className="py-3 px-3 text-start">{t('Product Type', 'نوع المنتج')}</th>
+                      <th className="py-3 px-3 text-end">{t('Sales Price (SAR)', 'سعر البيع')}</th>
+                      <th className="py-3 px-3 text-end">{t('Cost Price (SAR)', 'سعر التكلفة')}</th>
+                      <th className="py-3 px-3 text-end">{t('Quantity On Hand', 'الكمية المتوفرة')}</th>
+                      <th className="py-3 px-4 text-start">{t('Unit of Measure', 'وحدة القياس')}</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100">
+                    {products
+                      .filter((p) => {
+                        if (activeChips.includes('Sellable Products')) return p.canBeSold;
+                        if (activeChips.includes('Purchasable Products')) return p.canBePurchased;
+                        return true;
+                      })
+                      .map((p) => (
+                        <tr key={p.id} className="hover:bg-blue-50/40 cursor-pointer transition">
+                          <td className="py-3 px-4" onClick={(e) => e.stopPropagation()}>
+                            <input type="checkbox" className="rounded border-slate-300" />
+                          </td>
+                          <td className="py-3 px-3 font-mono font-bold text-blue-700">{p.defaultCode}</td>
+                          <td className="py-3 px-3 font-bold text-slate-900">{t(p.nameEn, p.nameAr)}</td>
+                          <td className="py-3 px-3 text-slate-600">{p.type}</td>
+                          <td className="py-3 px-3 text-end font-mono font-semibold text-slate-800">
+                            {p.listPrice.toLocaleString('en-US', { minimumFractionDigits: 2 })} SR
+                          </td>
+                          <td className="py-3 px-3 text-end font-mono text-slate-600">
+                            {p.standardPrice.toLocaleString('en-US', { minimumFractionDigits: 2 })} SR
+                          </td>
+                          <td className="py-3 px-3 text-end font-mono font-bold text-emerald-700">
+                            {p.qtyAvailable.toLocaleString('en-US', { minimumFractionDigits: 1 })}
+                          </td>
+                          <td className="py-3 px-4 text-slate-600">{p.uom}</td>
+                        </tr>
+                      ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {/* ===============================================================
+              VIEW O: CONFIGURATION (Chart of Accounts, Journals, Taxes, Payment Terms)
+             =============================================================== */}
+          {activeView === 'configuration' && (
+            <ConfigurationViews
+              subView={activeChips[0] || 'coa'}
+              t={t}
+              isRtl={isRtl}
+            />
           )}
 
           {/* ===============================================================
