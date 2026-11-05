@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import {
-  ChevronLeft, ChevronRight, Edit3, Save, X, Printer, QrCode,
-  CreditCard, CheckCircle2, Clock, AlertTriangle, FileText,
-  Calendar, Plus, Trash2, Copy, Send, Check, Layers,
-  ChevronDown, ExternalLink, ShieldCheck, ArrowRight
+  ChevronLeft, ChevronRight, Save, X, Printer, QrCode,
+  CreditCard, CheckCircle2, FileText, Plus, Trash2, Copy,
+  ChevronDown, ExternalLink
 } from 'lucide-react';
 
 export default function InvoiceFormView({
@@ -22,17 +21,31 @@ export default function InvoiceFormView({
   const [isEditing, setIsEditing] = useState(false);
   const [printMenuOpen, setPrintMenuOpen] = useState(false);
   const [actionMenuOpen, setActionMenuOpen] = useState(false);
-  const [showDevTooltip, setShowDevTooltip] = useState(false);
 
   // Editable local state initialized from invoice prop
   const [formData, setFormData] = useState({ ...invoice });
 
   useEffect(() => {
     setFormData({ ...invoice });
-    setIsEditing(false);
+    const isNew = Boolean(
+      invoice?.isNew ||
+      !invoice?.number ||
+      invoice?.number === 'Draft Invoice' ||
+      invoice?.number === 'Draft' ||
+      invoice?.number === 'New'
+    );
+    setIsEditing(isNew);
   }, [invoice]);
 
   if (!invoice) return null;
+
+  const isNewInvoice = Boolean(
+    formData.isNew ||
+    !formData.number ||
+    formData.number === 'Draft Invoice' ||
+    formData.number === 'Draft' ||
+    formData.number === 'New'
+  );
 
   // Navigation pager
   const currentIndex = allInvoices.findIndex((inv) => inv.id === invoice.id);
@@ -83,21 +96,25 @@ export default function InvoiceFormView({
   const handleAddLine = () => {
     const newLine = {
       id: Date.now(),
-      task: 'Workshop',
-      category: 'Maintenance',
+      task: '',
+      category: '',
+      showSeparately: false,
+      showLine: false,
+      mainQuantityCheck: false,
       partnerType: 'AYH',
-      subType: 'Hydraulic Cylinder Overhaul',
-      product: 'Hydraulic Cylinder Overhaul',
-      descEn: 'Workshop Cylinder Bench Pressure Testing & Seals',
-      descAr: 'فحص ضغط أسطوانة هيدروليكية وتغيير مانعات تسرب',
+      subType: '',
+      product: '',
+      descEn: '',
+      descAr: '',
       account: '479104 Revenue (Workshop)',
       analytic: 'CC-101 Workshop Ops',
       mainQty: 0.0,
       qty: 1,
       uom: 'Units',
-      price: 2500,
+      price: 0,
       tax: 15,
       discount: 0.0,
+      roundingRequired: false,
     };
     setFormData({
       ...formData,
@@ -106,7 +123,6 @@ export default function InvoiceFormView({
   };
 
   const handleRemoveLine = (id) => {
-    if (lines.length <= 1) return;
     setFormData({
       ...formData,
       lines: lines.filter((l) => l.id !== id),
@@ -116,6 +132,8 @@ export default function InvoiceFormView({
   const handleSaveEdits = () => {
     const updated = {
       ...formData,
+      isNew: false,
+      number: isNewInvoice ? 'Draft Invoice' : formData.number,
       taxExcluded,
       total: grandTotal,
       amountDue: formData.status === 'Paid' ? 0 : grandTotal,
@@ -125,54 +143,63 @@ export default function InvoiceFormView({
   };
 
   const handleDiscard = () => {
-    setFormData({ ...invoice });
-    setIsEditing(false);
+    if (isNewInvoice) {
+      onBack?.();
+    } else {
+      setFormData({ ...invoice });
+      setIsEditing(false);
+    }
   };
 
   const handleValidate = () => {
     const updated = {
       ...formData,
+      isNew: false,
       status: 'Posted',
+      number: isNewInvoice ? `INV/2026/000${Math.floor(14 + Math.random() * 80)}` : formData.number,
       zatcaStatus: 'CLEARED (QR)',
+      taxExcluded,
+      total: grandTotal,
+      amountDue: grandTotal,
     };
     setFormData(updated);
     onSave?.(updated);
+    setIsEditing(false);
   };
 
   return (
-    <div className="bg-[#f0f2f5] min-h-screen text-slate-800 text-xs font-sans pb-16 -mx-6 -my-5 p-6 space-y-4">
+    <div className="bg-[#f0f2f5] min-h-screen text-slate-800 text-xs font-sans pb-16 -mx-6 -my-5 p-6 space-y-3">
       {/* 1. TOP BREADCRUMB & CONTROL PANEL (EXACT ODOO SCREENSHOT HEADER) */}
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-300 pb-3">
-        {/* Left: Breadcrumbs */}
+        {/* Left: Breadcrumbs & Action Buttons */}
         <div>
           <div className="flex items-center gap-1.5 text-base text-[#0e7490] font-normal">
             <button
               onClick={onBack}
-              className="hover:underline font-semibold text-[#0e7490] focus:outline-none"
+              className="hover:underline font-semibold text-[#0e7490] focus:outline-none cursor-pointer"
               title="Back to list view"
             >
               {breadcrumbCategory}
             </button>
             <span className="text-slate-400">/</span>
-            <span className="text-slate-700 font-semibold font-mono">
-              {formData.number || t('Invoice', 'الفاتورة')}
+            <span className="text-slate-700 font-semibold">
+              {isNewInvoice ? t('New', 'جديد') : (formData.number || t('Invoice', 'الفاتورة'))}
             </span>
           </div>
 
-          {/* Action Buttons under Breadcrumb */}
+          {/* Action Buttons under Breadcrumb (Save / Discard OR Edit / Create) */}
           <div className="flex items-center gap-2 mt-2">
             {isEditing ? (
               <>
                 <button
                   onClick={handleSaveEdits}
-                  className="px-4 py-1.5 rounded bg-[#0e7490] hover:bg-[#155e75] text-white font-semibold text-xs shadow-2xs transition flex items-center gap-1"
+                  className="px-3.5 py-1 rounded bg-[#2e6b7d] hover:bg-[#235361] text-white font-medium text-xs shadow-2xs transition cursor-pointer"
                 >
-                  <Save className="w-3.5 h-3.5" />
-                  <span>{t('Save', 'حفظ')}</span>
+                  {t('Save', 'حفظ')}
                 </button>
                 <button
                   onClick={handleDiscard}
-                  className="px-4 py-1.5 rounded bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 font-semibold text-xs transition"
+                  className="px-3.5 py-1 rounded bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 font-medium text-xs transition cursor-pointer"
                 >
                   {t('Discard', 'إلغاء')}
                 </button>
@@ -181,13 +208,13 @@ export default function InvoiceFormView({
               <>
                 <button
                   onClick={() => setIsEditing(true)}
-                  className="px-4 py-1.5 rounded bg-[#0e7490] hover:bg-[#155e75] text-white font-semibold text-xs shadow-2xs transition"
+                  className="px-3.5 py-1 rounded bg-[#2e6b7d] hover:bg-[#235361] text-white font-medium text-xs shadow-2xs transition cursor-pointer"
                 >
                   {t('Edit', 'تعديل')}
                 </button>
                 <button
                   onClick={onCreateNew}
-                  className="px-4 py-1.5 rounded bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 font-semibold text-xs transition"
+                  className="px-3.5 py-1 rounded bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 font-medium text-xs transition cursor-pointer"
                 >
                   {t('Create', 'إنشاء')}
                 </button>
@@ -196,125 +223,125 @@ export default function InvoiceFormView({
           </div>
         </div>
 
-        {/* Right: Print / Action dropdowns & Record Pager */}
-        <div className="flex items-center gap-3">
-          {/* Print Dropdown */}
-          <div className="relative">
-            <button
-              onClick={() => {
-                setPrintMenuOpen(!printMenuOpen);
-                setActionMenuOpen(false);
-              }}
-              className="px-3 py-1.5 rounded bg-white hover:bg-slate-50 border border-slate-300 text-slate-700 text-xs font-medium flex items-center gap-1 transition"
-            >
-              <span>{t('Print', 'طباعة')}</span>
-              <ChevronDown className="w-3 h-3 text-slate-500" />
-            </button>
-            {printMenuOpen && (
-              <div className="absolute right-0 mt-1 w-48 bg-white border border-slate-200 rounded-md shadow-lg py-1 z-30">
-                <button
-                  onClick={() => {
-                    window.print();
-                    setPrintMenuOpen(false);
-                  }}
-                  className="w-full text-start px-3 py-1.5 hover:bg-slate-100 text-xs flex items-center gap-2"
-                >
-                  <Printer className="w-3.5 h-3.5 text-slate-500" />
-                  <span>{t('Invoices / Tax Receipt', 'الفاتورة الضريبية')}</span>
-                </button>
-                <button
-                  onClick={() => {
-                    window.print();
-                    setPrintMenuOpen(false);
-                  }}
-                  className="w-full text-start px-3 py-1.5 hover:bg-slate-100 text-xs flex items-center gap-2"
-                >
-                  <FileText className="w-3.5 h-3.5 text-slate-500" />
-                  <span>{t('Proforma Invoice', 'فاتورة بروفرما')}</span>
-                </button>
-              </div>
-            )}
-          </div>
+        {/* Right: Print / Action dropdowns & Record Pager (Hidden when creating New invoice) */}
+        {!isNewInvoice && (
+          <div className="flex items-center gap-3">
+            {/* Print Dropdown */}
+            <div className="relative">
+              <button
+                onClick={() => {
+                  setPrintMenuOpen(!printMenuOpen);
+                  setActionMenuOpen(false);
+                }}
+                className="px-3 py-1.5 rounded bg-white hover:bg-slate-50 border border-slate-300 text-slate-700 text-xs font-medium flex items-center gap-1 transition"
+              >
+                <span>{t('Print', 'طباعة')}</span>
+                <ChevronDown className="w-3 h-3 text-slate-500" />
+              </button>
+              {printMenuOpen && (
+                <div className="absolute right-0 mt-1 w-48 bg-white border border-slate-200 rounded-md shadow-lg py-1 z-30">
+                  <button
+                    onClick={() => {
+                      window.print();
+                      setPrintMenuOpen(false);
+                    }}
+                    className="w-full text-start px-3 py-1.5 hover:bg-slate-100 text-xs flex items-center gap-2"
+                  >
+                    <Printer className="w-3.5 h-3.5 text-slate-500" />
+                    <span>{t('Invoices / Tax Receipt', 'الفاتورة الضريبية')}</span>
+                  </button>
+                  <button
+                    onClick={() => {
+                      window.print();
+                      setPrintMenuOpen(false);
+                    }}
+                    className="w-full text-start px-3 py-1.5 hover:bg-slate-100 text-xs flex items-center gap-2"
+                  >
+                    <FileText className="w-3.5 h-3.5 text-slate-500" />
+                    <span>{t('Proforma Invoice', 'فاتورة بروفرما')}</span>
+                  </button>
+                </div>
+              )}
+            </div>
 
-          {/* Action Dropdown */}
-          <div className="relative">
-            <button
-              onClick={() => {
-                setActionMenuOpen(!actionMenuOpen);
-                setPrintMenuOpen(false);
-              }}
-              className="px-3 py-1.5 rounded bg-white hover:bg-slate-50 border border-slate-300 text-slate-700 text-xs font-medium flex items-center gap-1 transition"
-            >
-              <span>{t('Action', 'إجراءات')}</span>
-              <ChevronDown className="w-3 h-3 text-slate-500" />
-            </button>
-            {actionMenuOpen && (
-              <div className="absolute right-0 mt-1 w-44 bg-white border border-slate-200 rounded-md shadow-lg py-1 z-30">
-                <button
-                  onClick={() => {
-                    alert(t('Invoice duplicated.', 'تم نسخ الفاتورة.'));
-                    setActionMenuOpen(false);
-                  }}
-                  className="w-full text-start px-3 py-1.5 hover:bg-slate-100 text-xs flex items-center gap-2"
-                >
-                  <Copy className="w-3.5 h-3.5 text-slate-500" />
-                  <span>{t('Duplicate', 'نسخ')}</span>
-                </button>
-                <button
-                  onClick={() => {
-                    alert(t('ZATCA XML Exported.', 'تم تصدير ملف الزكاة XML.'));
-                    setActionMenuOpen(false);
-                  }}
-                  className="w-full text-start px-3 py-1.5 hover:bg-slate-100 text-xs flex items-center gap-2"
-                >
-                  <QrCode className="w-3.5 h-3.5 text-slate-500" />
-                  <span>{t('Download ZATCA XML', 'تحميل XML الزكاة')}</span>
-                </button>
-              </div>
-            )}
-          </div>
+            {/* Action Dropdown */}
+            <div className="relative">
+              <button
+                onClick={() => {
+                  setActionMenuOpen(!actionMenuOpen);
+                  setPrintMenuOpen(false);
+                }}
+                className="px-3 py-1.5 rounded bg-white hover:bg-slate-50 border border-slate-300 text-slate-700 text-xs font-medium flex items-center gap-1 transition"
+              >
+                <span>{t('Action', 'إجراءات')}</span>
+                <ChevronDown className="w-3 h-3 text-slate-500" />
+              </button>
+              {actionMenuOpen && (
+                <div className="absolute right-0 mt-1 w-44 bg-white border border-slate-200 rounded-md shadow-lg py-1 z-30">
+                  <button
+                    onClick={() => {
+                      alert(t('Invoice duplicated.', 'تم نسخ الفاتورة.'));
+                      setActionMenuOpen(false);
+                    }}
+                    className="w-full text-start px-3 py-1.5 hover:bg-slate-100 text-xs flex items-center gap-2"
+                  >
+                    <Copy className="w-3.5 h-3.5 text-slate-500" />
+                    <span>{t('Duplicate', 'نسخ')}</span>
+                  </button>
+                  <button
+                    onClick={() => {
+                      alert(t('ZATCA XML Exported.', 'تم تصدير ملف الزكاة XML.'));
+                      setActionMenuOpen(false);
+                    }}
+                    className="w-full text-start px-3 py-1.5 hover:bg-slate-100 text-xs flex items-center gap-2"
+                  >
+                    <QrCode className="w-3.5 h-3.5 text-slate-500" />
+                    <span>{t('Download ZATCA XML', 'تحميل XML الزكاة')}</span>
+                  </button>
+                </div>
+              )}
+            </div>
 
-          {/* Pager (< 1 / 6 >) */}
-          <div className="flex items-center gap-1 text-xs text-slate-600 bg-white border border-slate-300 rounded px-2 py-1">
-            <button
-              disabled={!hasPrev}
-              onClick={() => onSelectInvoice?.(allInvoices[currentIndex - 1])}
-              className="p-0.5 rounded hover:bg-slate-100 disabled:opacity-30 disabled:cursor-not-allowed"
-              title="Previous"
-            >
-              <ChevronLeft className="w-3.5 h-3.5" />
-            </button>
-            <span className="font-mono px-1 font-semibold">
-              {currentIndex >= 0 ? `${currentIndex + 1} / ${allInvoices.length}` : '-'}
-            </span>
-            <button
-              disabled={!hasNext}
-              onClick={() => onSelectInvoice?.(allInvoices[currentIndex + 1])}
-              className="p-0.5 rounded hover:bg-slate-100 disabled:opacity-30 disabled:cursor-not-allowed"
-              title="Next"
-            >
-              <ChevronRight className="w-3.5 h-3.5" />
-            </button>
+            {/* Pager (< 1 / 6 >) */}
+            <div className="flex items-center gap-1 text-xs text-slate-600 bg-white border border-slate-300 rounded px-2 py-1">
+              <button
+                disabled={!hasPrev}
+                onClick={() => onSelectInvoice?.(allInvoices[currentIndex - 1])}
+                className="p-0.5 rounded hover:bg-slate-100 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
+                title="Previous"
+              >
+                <ChevronLeft className="w-3.5 h-3.5" />
+              </button>
+              <span className="font-mono px-1 font-semibold">
+                {currentIndex >= 0 ? `${currentIndex + 1} / ${allInvoices.length}` : '-'}
+              </span>
+              <button
+                disabled={!hasNext}
+                onClick={() => onSelectInvoice?.(allInvoices[currentIndex + 1])}
+                className="p-0.5 rounded hover:bg-slate-100 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
+                title="Next"
+              >
+                <ChevronRight className="w-3.5 h-3.5" />
+              </button>
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
       {/* 2. ODOO WORKFLOW ACTION BAR & STATUSBAR CHEVRONS (MATCHING SCREENSHOT) */}
-      <div className="bg-white border border-slate-300 rounded-t-lg p-2.5 flex flex-wrap items-center justify-between gap-3 shadow-2xs">
+      <div className="bg-white border border-slate-300 rounded-t-lg p-2 flex flex-wrap items-center justify-between gap-3 shadow-2xs">
         {/* Left Action Buttons */}
         <div className="flex items-center gap-1.5">
-          {isDraft && (
-            <button
-              onClick={handleValidate}
-              className="px-3.5 py-1.5 rounded bg-[#0e7490] hover:bg-[#155e75] text-white font-semibold text-xs shadow-2xs transition"
-            >
-              {t('Validate', 'اعتماد')}
-            </button>
-          )}
+          <button
+            onClick={handleValidate}
+            className="px-3.5 py-1 rounded bg-[#2e6b7d] hover:bg-[#235361] text-white font-medium text-xs shadow-2xs transition cursor-pointer"
+          >
+            {t('Validate', 'اعتماد')}
+          </button>
 
           <button
             onClick={() => window.print()}
-            className="px-3 py-1.5 rounded bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 font-semibold text-xs transition"
+            className="px-3 py-1 rounded bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 font-medium text-xs transition cursor-pointer"
           >
             {t('Preview', 'معاينة')}
           </button>
@@ -325,7 +352,7 @@ export default function InvoiceFormView({
               setFormData(updated);
               onSave?.(updated);
             }}
-            className="px-3 py-1.5 rounded bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 font-semibold text-xs transition"
+            className="px-3 py-1 rounded bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 font-medium text-xs transition cursor-pointer"
           >
             {t('Print Proforma Invoice', 'طباعة بروفرما')}
           </button>
@@ -333,7 +360,7 @@ export default function InvoiceFormView({
           {isOpen && !isPaid && onRegisterPayment && (
             <button
               onClick={() => onRegisterPayment(formData)}
-              className="px-3 py-1.5 rounded bg-emerald-700 hover:bg-emerald-800 text-white font-semibold text-xs shadow-2xs transition flex items-center gap-1"
+              className="px-3 py-1 rounded bg-emerald-700 hover:bg-emerald-800 text-white font-medium text-xs shadow-2xs transition flex items-center gap-1 cursor-pointer"
             >
               <CreditCard className="w-3.5 h-3.5" />
               <span>{t('Register Payment', 'تسجيل سداد')}</span>
@@ -342,7 +369,7 @@ export default function InvoiceFormView({
 
           <button
             onClick={onBack}
-            className="px-3 py-1.5 rounded bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 font-semibold text-xs transition"
+            className="px-3 py-1 rounded bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 font-medium text-xs transition cursor-pointer"
           >
             {t('Cancel', 'إلغاء')}
           </button>
@@ -351,7 +378,7 @@ export default function InvoiceFormView({
         {/* Right: Iconic Odoo Triangular Statusbar (Draft ➔ Open ➔ Paid) */}
         <div className="flex items-center text-xs font-semibold">
           <div
-            className={`px-4 py-1.5 transition flex items-center gap-1 border border-r-0 border-slate-300 rounded-l ${
+            className={`px-4 py-1 transition flex items-center gap-1 border border-r-0 border-slate-300 rounded-l ${
               isDraft
                 ? 'bg-slate-200 text-slate-800 font-bold shadow-inner'
                 : 'bg-white text-slate-400'
@@ -361,18 +388,18 @@ export default function InvoiceFormView({
           </div>
 
           <div
-            className={`px-4 py-1.5 transition flex items-center gap-1 border-y border-slate-300 ${
+            className={`px-4 py-1 transition flex items-center gap-1 border-y border-slate-300 ${
               isOpen
                 ? 'bg-slate-200 text-slate-800 font-bold shadow-inner'
                 : 'bg-white text-slate-400'
             }`}
           >
             <span className="text-slate-300 mr-1">›</span>
-            <span>{t('Open', 'مفتوحة / معتمدة')}</span>
+            <span>{t('Open', 'مفتوحة')}</span>
           </div>
 
           <div
-            className={`px-4 py-1.5 transition flex items-center gap-1 border border-l-0 border-slate-300 rounded-r ${
+            className={`px-4 py-1 transition flex items-center gap-1 border border-l-0 border-slate-300 rounded-r ${
               isPaid
                 ? 'bg-emerald-100 text-emerald-800 font-bold'
                 : 'bg-white text-slate-400'
@@ -389,7 +416,7 @@ export default function InvoiceFormView({
         {/* Document Title */}
         <div>
           <h1 className="text-2xl font-bold text-slate-900">
-            {formData.status === 'Draft' ? t('Draft Invoice', 'مسودة فاتورة') : (formData.number || t('Invoice', 'الفاتورة'))}
+            {formData.status === 'Draft' || isNewInvoice ? t('Draft Invoice', 'مسودة فاتورة') : (formData.number || t('Invoice', 'الفاتورة'))}
           </h1>
         </div>
 
@@ -410,15 +437,15 @@ export default function InvoiceFormView({
                       setFormData({ ...formData, isSubscription: !formData.isSubscription });
                     }
                   }}
-                  className={`w-9 h-5 flex items-center rounded-full p-0.5 transition ${
-                    formData.isSubscription || formData.invoiceSubtype === 'cash'
+                  className={`w-9 h-5 flex items-center rounded-full p-0.5 transition cursor-pointer ${
+                    formData.isSubscription
                       ? 'bg-[#0e7490]'
                       : 'bg-slate-300'
                   }`}
                 >
                   <div
                     className={`bg-white w-4 h-4 rounded-full shadow-md transform transition ${
-                      formData.isSubscription || formData.invoiceSubtype === 'cash'
+                      formData.isSubscription
                         ? 'translate-x-4'
                         : 'translate-x-0'
                     }`}
@@ -427,27 +454,46 @@ export default function InvoiceFormView({
               </div>
             </div>
 
-            {/* Customer */}
+            {/* Customer (Select / Input with #d9e6f2 background) */}
             <div className="flex items-center">
               <label className="w-1/3 font-semibold text-slate-700">
                 {t('Customer', 'العميل')}
               </label>
               <div className="w-2/3">
                 {isEditing ? (
-                  <input
-                    type="text"
-                    value={formData.customerEn}
-                    onChange={(e) => setFormData({ ...formData, customerEn: e.target.value })}
-                    className="w-full border border-slate-300 rounded px-2.5 py-1 text-xs"
-                  />
+                  <div className="relative">
+                    <input
+                      type="text"
+                      list="customer-list"
+                      value={formData.customerEn || ''}
+                      onChange={(e) => setFormData({ ...formData, customerEn: e.target.value })}
+                      placeholder=""
+                      className="w-full bg-[#d9e6f2] border border-slate-300 rounded px-2.5 py-1 text-xs text-slate-800 focus:outline-none focus:border-[#0e7490]"
+                    />
+                    <ChevronDown className="w-3.5 h-3.5 text-slate-500 absolute right-2.5 top-2 pointer-events-none" />
+                    <datalist id="customer-list">
+                      <option value="Neom Bay Infrastructure JV" />
+                      <option value="Riyadh Metro Construction Corp." />
+                      <option value="Al-Futtaim Saudi Contracting" />
+                      <option value="Acme Arabia Industrial Corp." />
+                      <option value="Saudi Aramco Mining Div" />
+                      <option value="Red Sea Drilling & Marine Services" />
+                      <option value="44 Supermarket" />
+                      <option value="Ready Mat Industrial Saudi" />
+                    </datalist>
+                  </div>
                 ) : (
-                  <a
-                    href="#customer"
-                    onClick={(e) => e.preventDefault()}
-                    className="text-[#0e7490] hover:underline font-semibold"
-                  >
-                    {formData.customerEn || '44 Supermarket'}
-                  </a>
+                  formData.customerEn ? (
+                    <a
+                      href="#customer"
+                      onClick={(e) => e.preventDefault()}
+                      className="text-[#0e7490] hover:underline font-semibold"
+                    >
+                      {formData.customerEn}
+                    </a>
+                  ) : (
+                    <span className="text-slate-400 italic">-</span>
+                  )
                 )}
               </div>
             </div>
@@ -459,13 +505,16 @@ export default function InvoiceFormView({
               </label>
               <div className="w-2/3 text-slate-600">
                 {isEditing ? (
-                  <input
-                    type="text"
-                    value={formData.project || ''}
-                    onChange={(e) => setFormData({ ...formData, project: e.target.value })}
-                    placeholder="Project name..."
-                    className="w-full border border-slate-300 rounded px-2.5 py-1 text-xs"
-                  />
+                  <div className="relative">
+                    <input
+                      type="text"
+                      value={formData.project || ''}
+                      onChange={(e) => setFormData({ ...formData, project: e.target.value })}
+                      placeholder=""
+                      className="w-full border border-slate-300 rounded px-2.5 py-1 text-xs bg-white focus:outline-none focus:border-[#0e7490]"
+                    />
+                    <ChevronDown className="w-3.5 h-3.5 text-slate-500 absolute right-2.5 top-2 pointer-events-none" />
+                  </div>
                 ) : (
                   formData.project || '-'
                 )}
@@ -479,13 +528,16 @@ export default function InvoiceFormView({
               </label>
               <div className="w-2/3 text-slate-600">
                 {isEditing ? (
-                  <input
-                    type="text"
-                    value={formData.contactPerson || ''}
-                    onChange={(e) => setFormData({ ...formData, contactPerson: e.target.value })}
-                    placeholder="Contact person..."
-                    className="w-full border border-slate-300 rounded px-2.5 py-1 text-xs"
-                  />
+                  <div className="relative">
+                    <input
+                      type="text"
+                      value={formData.contactPerson || ''}
+                      onChange={(e) => setFormData({ ...formData, contactPerson: e.target.value })}
+                      placeholder=""
+                      className="w-full border border-slate-300 rounded px-2.5 py-1 text-xs bg-white focus:outline-none focus:border-[#0e7490]"
+                    />
+                    <ChevronDown className="w-3.5 h-3.5 text-slate-500 absolute right-2.5 top-2 pointer-events-none" />
+                  </div>
                 ) : (
                   formData.contactPerson || '-'
                 )}
@@ -499,17 +551,22 @@ export default function InvoiceFormView({
               </label>
               <div className="w-2/3 text-slate-600">
                 {isEditing ? (
-                  <select
-                    value={formData.paymentTerms || (formData.invoiceSubtype === 'cash' ? 'Immediate Payment' : '30 Days')}
-                    onChange={(e) => setFormData({ ...formData, paymentTerms: e.target.value })}
-                    className="w-full border border-slate-300 rounded px-2.5 py-1 text-xs bg-white"
-                  >
-                    <option value="Immediate Payment">Immediate Payment (سداد فوري)</option>
-                    <option value="15 Days">15 Days</option>
-                    <option value="30 Days">30 Days</option>
-                  </select>
+                  <div className="relative">
+                    <select
+                      value={formData.paymentTerms || ''}
+                      onChange={(e) => setFormData({ ...formData, paymentTerms: e.target.value })}
+                      className="w-full border border-slate-300 rounded px-2.5 py-1 text-xs bg-white appearance-none focus:outline-none focus:border-[#0e7490]"
+                    >
+                      <option value=""></option>
+                      <option value="Immediate Payment">Immediate Payment (سداد فوري)</option>
+                      <option value="15 Days">15 Days</option>
+                      <option value="30 Days">30 Days</option>
+                      <option value="60 Days">60 Days</option>
+                    </select>
+                    <ChevronDown className="w-3.5 h-3.5 text-slate-500 absolute right-2.5 top-2 pointer-events-none" />
+                  </div>
                 ) : (
-                  formData.paymentTerms || (formData.invoiceSubtype === 'cash' ? 'Immediate Payment' : '30 Days')
+                  formData.paymentTerms || '-'
                 )}
               </div>
             </div>
@@ -536,7 +593,16 @@ export default function InvoiceFormView({
                 {t('Vendor Project Name', 'اسم مشروع المورد')}
               </label>
               <div className="w-2/3 text-slate-600">
-                {formData.vendorProjectName || '-'}
+                {isEditing ? (
+                  <input
+                    type="text"
+                    value={formData.vendorProjectName || ''}
+                    onChange={(e) => setFormData({ ...formData, vendorProjectName: e.target.value })}
+                    className="w-full border border-slate-300 rounded px-2.5 py-1 text-xs bg-white focus:outline-none focus:border-[#0e7490]"
+                  />
+                ) : (
+                  formData.vendorProjectName || '-'
+                )}
               </div>
             </div>
 
@@ -546,7 +612,16 @@ export default function InvoiceFormView({
                 {t('PR Number', 'رقم طلب الشراء (PR)')}
               </label>
               <div className="w-2/3 text-slate-600">
-                {formData.prNumber || '-'}
+                {isEditing ? (
+                  <input
+                    type="text"
+                    value={formData.prNumber || ''}
+                    onChange={(e) => setFormData({ ...formData, prNumber: e.target.value })}
+                    className="w-full border border-slate-300 rounded px-2.5 py-1 text-xs bg-white focus:outline-none focus:border-[#0e7490]"
+                  />
+                ) : (
+                  formData.prNumber || '-'
+                )}
               </div>
             </div>
 
@@ -556,7 +631,16 @@ export default function InvoiceFormView({
                 {t('PO Number', 'رقم أمر الشراء (PO)')}
               </label>
               <div className="w-2/3 text-slate-600">
-                {formData.poNumber || '-'}
+                {isEditing ? (
+                  <input
+                    type="text"
+                    value={formData.poNumber || ''}
+                    onChange={(e) => setFormData({ ...formData, poNumber: e.target.value })}
+                    className="w-full border border-slate-300 rounded px-2.5 py-1 text-xs bg-white focus:outline-none focus:border-[#0e7490]"
+                  />
+                ) : (
+                  formData.poNumber || '-'
+                )}
               </div>
             </div>
           </div>
@@ -569,7 +653,19 @@ export default function InvoiceFormView({
                 {t('Invoice Date with Time', 'تاريخ ووقت الفاتورة')}
               </label>
               <div className="w-3/5 text-slate-700 font-mono">
-                {formData.invoiceDateTime || '06/03/2026 12:46:33'}
+                {isEditing ? (
+                  <div className="relative">
+                    <input
+                      type="text"
+                      value={formData.invoiceDateTime || ''}
+                      onChange={(e) => setFormData({ ...formData, invoiceDateTime: e.target.value })}
+                      className="w-full border border-slate-300 rounded px-2.5 py-1 text-xs font-mono bg-white focus:outline-none focus:border-[#0e7490]"
+                    />
+                    <ChevronDown className="w-3.5 h-3.5 text-slate-500 absolute right-2.5 top-2 pointer-events-none" />
+                  </div>
+                ) : (
+                  formData.invoiceDateTime || '-'
+                )}
               </div>
             </div>
 
@@ -579,7 +675,19 @@ export default function InvoiceFormView({
                 {t('Invoice Date', 'تاريخ الفاتورة')}
               </label>
               <div className="w-3/5 text-slate-700 font-mono">
-                {formData.invoiceDate || '06/03/2026'}
+                {isEditing ? (
+                  <div className="relative">
+                    <input
+                      type="text"
+                      value={formData.invoiceDate || ''}
+                      onChange={(e) => setFormData({ ...formData, invoiceDate: e.target.value })}
+                      className="w-full border border-slate-300 rounded px-2.5 py-1 text-xs font-mono bg-white focus:outline-none focus:border-[#0e7490]"
+                    />
+                    <ChevronDown className="w-3.5 h-3.5 text-slate-500 absolute right-2.5 top-2 pointer-events-none" />
+                  </div>
+                ) : (
+                  formData.invoiceDate || '-'
+                )}
               </div>
             </div>
 
@@ -589,7 +697,19 @@ export default function InvoiceFormView({
                 {t('Due Date', 'تاريخ الاستحقاق')}
               </label>
               <div className="w-3/5 text-slate-700 font-mono">
-                {formData.dueDateText || '06/03/2026'}
+                {isEditing ? (
+                  <div className="relative">
+                    <input
+                      type="text"
+                      value={formData.dueDateText || ''}
+                      onChange={(e) => setFormData({ ...formData, dueDateText: e.target.value })}
+                      className="w-full border border-slate-300 rounded px-2.5 py-1 text-xs font-mono bg-white focus:outline-none focus:border-[#0e7490]"
+                    />
+                    <ChevronDown className="w-3.5 h-3.5 text-slate-500 absolute right-2.5 top-2 pointer-events-none" />
+                  </div>
+                ) : (
+                  formData.dueDateText || '-'
+                )}
               </div>
             </div>
 
@@ -599,13 +719,36 @@ export default function InvoiceFormView({
                 {t('Salesperson', 'مسؤول المبيعات')}
               </label>
               <div className="w-3/5">
-                <a
-                  href="#salesperson"
-                  onClick={(e) => e.preventDefault()}
-                  className="text-[#0e7490] hover:underline font-semibold"
-                >
-                  {formData.salesperson || 'Adithya PL'}
-                </a>
+                {isEditing ? (
+                  <div className="flex items-center gap-1.5">
+                    <div className="relative flex-1">
+                      <select
+                        value={formData.salesperson || 'Administrator'}
+                        onChange={(e) => setFormData({ ...formData, salesperson: e.target.value })}
+                        className="w-full border border-slate-300 rounded px-2.5 py-1 text-xs bg-white text-slate-800 appearance-none focus:outline-none focus:border-[#0e7490]"
+                      >
+                        <option value="Administrator">Administrator</option>
+                        <option value="Adithya PL">Adithya PL</option>
+                        <option value="Tariq Al-Mansoor">Tariq Al-Mansoor</option>
+                      </select>
+                      <ChevronDown className="w-3.5 h-3.5 text-slate-500 absolute right-2.5 top-2 pointer-events-none" />
+                    </div>
+                    <div className="w-6 h-6 border border-slate-300 rounded flex items-center justify-center text-slate-500 hover:text-slate-800 cursor-pointer shrink-0">
+                      <ExternalLink className="w-3 h-3" />
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-1.5">
+                    <a
+                      href="#salesperson"
+                      onClick={(e) => e.preventDefault()}
+                      className="text-[#0e7490] hover:underline font-semibold"
+                    >
+                      {formData.salesperson || 'Administrator'}
+                    </a>
+                    <ExternalLink className="w-3 h-3 text-slate-400" />
+                  </div>
+                )}
               </div>
             </div>
 
@@ -615,7 +758,16 @@ export default function InvoiceFormView({
                 {t('Equipment Details', 'تفاصيل المعدات')}
               </label>
               <div className="w-3/5 text-slate-600">
-                {formData.equipmentDetails || '-'}
+                {isEditing ? (
+                  <input
+                    type="text"
+                    value={formData.equipmentDetails || ''}
+                    onChange={(e) => setFormData({ ...formData, equipmentDetails: e.target.value })}
+                    className="w-full border border-slate-300 rounded px-2.5 py-1 text-xs bg-white focus:outline-none focus:border-[#0e7490]"
+                  />
+                ) : (
+                  formData.equipmentDetails || '-'
+                )}
               </div>
             </div>
 
@@ -625,7 +777,22 @@ export default function InvoiceFormView({
                 {t('Group Task', 'مجموعة المهام')}
               </label>
               <div className="w-3/5 text-slate-700 font-medium">
-                {formData.groupTask || 'No Grouping'}
+                {isEditing ? (
+                  <div className="relative">
+                    <select
+                      value={formData.groupTask || 'No Grouping'}
+                      onChange={(e) => setFormData({ ...formData, groupTask: e.target.value })}
+                      className="w-full border border-slate-300 rounded px-2.5 py-1 text-xs bg-white text-slate-800 appearance-none focus:outline-none focus:border-[#0e7490]"
+                    >
+                      <option value="No Grouping">No Grouping</option>
+                      <option value="By Category">By Category</option>
+                      <option value="By Equipment">By Equipment</option>
+                    </select>
+                    <ChevronDown className="w-3.5 h-3.5 text-slate-500 absolute right-2.5 top-2 pointer-events-none" />
+                  </div>
+                ) : (
+                  formData.groupTask || 'No Grouping'
+                )}
               </div>
             </div>
 
@@ -635,7 +802,16 @@ export default function InvoiceFormView({
                 {t('Source Document', 'المستند المصدري')}
               </label>
               <div className="w-3/5 text-slate-700 font-mono">
-                {formData.proformaRef && formData.proformaRef !== '-' ? formData.proformaRef : '-'}
+                {isEditing ? (
+                  <input
+                    type="text"
+                    value={formData.proformaRef || ''}
+                    onChange={(e) => setFormData({ ...formData, proformaRef: e.target.value })}
+                    className="w-full border border-slate-300 rounded px-2.5 py-1 text-xs bg-white font-mono focus:outline-none focus:border-[#0e7490]"
+                  />
+                ) : (
+                  formData.proformaRef && formData.proformaRef !== '-' ? formData.proformaRef : '-'
+                )}
               </div>
             </div>
 
@@ -693,23 +869,61 @@ export default function InvoiceFormView({
                 {t('Sales Team', 'فريق المبيعات')}
               </label>
               <div className="w-3/5">
-                <a
-                  href="#team"
-                  onClick={(e) => e.preventDefault()}
-                  className="text-[#0e7490] hover:underline font-semibold"
-                >
-                  {formData.salesTeam || 'Sales'}
-                </a>
+                {isEditing ? (
+                  <div className="flex items-center gap-1.5">
+                    <div className="relative flex-1">
+                      <select
+                        value={formData.salesTeam || 'Sales'}
+                        onChange={(e) => setFormData({ ...formData, salesTeam: e.target.value })}
+                        className="w-full border border-slate-300 rounded px-2.5 py-1 text-xs bg-white text-slate-800 appearance-none focus:outline-none focus:border-[#0e7490]"
+                      >
+                        <option value="Sales">Sales</option>
+                        <option value="Hydraulic Workshop">Hydraulic Workshop</option>
+                        <option value="Spare Parts">Spare Parts</option>
+                      </select>
+                      <ChevronDown className="w-3.5 h-3.5 text-slate-500 absolute right-2.5 top-2 pointer-events-none" />
+                    </div>
+                    <div className="w-6 h-6 border border-slate-300 rounded flex items-center justify-center text-slate-500 hover:text-slate-800 cursor-pointer shrink-0">
+                      <ExternalLink className="w-3 h-3" />
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-1.5">
+                    <a
+                      href="#team"
+                      onClick={(e) => e.preventDefault()}
+                      className="text-[#0e7490] hover:underline font-semibold"
+                    >
+                      {formData.salesTeam || 'Sales'}
+                    </a>
+                    <ExternalLink className="w-3 h-3 text-slate-400" />
+                  </div>
+                )}
               </div>
             </div>
 
-            {/* Currency */}
+            {/* Currency (Select with #d9e6f2 background) */}
             <div className="flex items-center">
               <label className="w-2/5 font-semibold text-slate-700">
                 {t('Currency', 'العملة')}
               </label>
               <div className="w-3/5 font-semibold text-slate-800">
-                SAR
+                {isEditing ? (
+                  <div className="relative">
+                    <select
+                      value={formData.currency || 'SAR'}
+                      onChange={(e) => setFormData({ ...formData, currency: e.target.value })}
+                      className="w-full bg-[#d9e6f2] border border-slate-300 rounded px-2.5 py-1 text-xs text-slate-800 font-semibold appearance-none focus:outline-none focus:border-[#0e7490]"
+                    >
+                      <option value="SAR">SAR</option>
+                      <option value="USD">USD</option>
+                      <option value="EUR">EUR</option>
+                    </select>
+                    <ChevronDown className="w-3.5 h-3.5 text-slate-500 absolute right-2.5 top-2 pointer-events-none" />
+                  </div>
+                ) : (
+                  <span className="font-semibold text-slate-800">{formData.currency || 'SAR'}</span>
+                )}
               </div>
             </div>
           </div>
@@ -721,7 +935,7 @@ export default function InvoiceFormView({
             <div className="flex items-center gap-1">
               <button
                 onClick={() => setActiveTab('lines')}
-                className={`px-4 py-2 border-b-2 transition relative ${
+                className={`px-4 py-2 border-b-2 transition relative cursor-pointer ${
                   activeTab === 'lines'
                     ? 'border-[#0e7490] text-[#0e7490] font-bold'
                     : 'border-transparent text-slate-500 hover:text-slate-800'
@@ -731,7 +945,7 @@ export default function InvoiceFormView({
               </button>
               <button
                 onClick={() => setActiveTab('other')}
-                className={`px-4 py-2 border-b-2 transition ${
+                className={`px-4 py-2 border-b-2 transition cursor-pointer ${
                   activeTab === 'other'
                     ? 'border-[#0e7490] text-[#0e7490] font-bold'
                     : 'border-transparent text-slate-500 hover:text-slate-800'
@@ -740,206 +954,267 @@ export default function InvoiceFormView({
                 {t('Other Info', 'معلومات أخرى')}
               </button>
             </div>
-
-            {/* Developer Mode Inspect Tooltip Trigger (Odoo Debug tooltip from screenshot c08da0d2.jpg) */}
-            <button
-              type="button"
-              onClick={() => setShowDevTooltip(!showDevTooltip)}
-              className="text-[11px] text-slate-400 hover:text-[#0e7490] flex items-center gap-1.5 px-2.5 py-1 rounded hover:bg-slate-100 transition"
-              title="Click to view Odoo technical model metadata"
-            >
-              <span className="font-mono text-[10px]">invoice_line_ids</span>
-              <span className="text-[9px] bg-slate-200 text-slate-700 px-1 py-0.2 rounded font-mono font-bold">one2many</span>
-            </button>
           </div>
-
-          {/* ODOO DEVELOPER MODE FLOATING TOOLTIP (EXACT REPLICA OF USER'S SCREENSHOT c08da0d2.jpg) */}
-          {showDevTooltip && (
-            <div className="absolute left-1/2 -translate-x-1/2 top-12 z-50 bg-[#16202c] text-slate-200 text-[11px] p-4 rounded-lg shadow-2xl border border-slate-700 font-mono w-[380px] space-y-1.5 animate-in fade-in zoom-in-95 duration-150">
-              <div className="flex items-center justify-between font-bold text-white border-b border-slate-700 pb-1.5 font-sans text-xs">
-                <span>Invoice Lines</span>
-                <button
-                  onClick={() => setShowDevTooltip(false)}
-                  className="text-slate-400 hover:text-white text-xs px-1"
-                >
-                  ✕
-                </button>
-              </div>
-              <div className="pt-1"><span className="text-slate-400">• Field:</span> <span className="text-emerald-400">invoice_line_ids</span></div>
-              <div><span className="text-slate-400">• Object:</span> account.invoice</div>
-              <div><span className="text-slate-400">• Type:</span> one2many</div>
-              <div><span className="text-slate-400">• Widget:</span> section_and_note_one2many</div>
-              <div><span className="text-slate-400">• Context:</span> {'{\'type\': type, \'journal_id\': journal_id, \'default_invoice_id\': id}'}</div>
-              <div><span className="text-slate-400">• Domain:</span> []</div>
-              <div><span className="text-slate-400">• Modifiers:</span> {JSON.stringify({"readonly": [["state", "not in", ["draft"]]]})}</div>
-              <div><span className="text-slate-400">• On change:</span> 1</div>
-              <div><span className="text-slate-400">• Relation:</span> account.invoice.line</div>
-            </div>
-          )}
 
           {/* TAB 1: INVOICE LINES TABLE (EXACT MATCH TO ODOO SCREENSHOT) */}
           {activeTab === 'lines' && (
-            <div className="pt-3 space-y-4">
+            <div className="pt-3 space-y-3">
               <div className="overflow-x-auto border border-slate-300 rounded bg-white">
                 <table className="w-full text-[11px] text-start whitespace-nowrap">
                   <thead className="bg-[#f8fafc] text-slate-700 border-b border-slate-300 font-bold">
                     <tr>
-                      <th className="py-2.5 px-3 text-start">▾ {t('Main Task', 'المهمة الرئيسية')}</th>
-                      <th className="py-2.5 px-3 text-start">{t('Category', 'الفئة')}</th>
-                      <th className="py-2.5 px-2 text-center">{t('Show Separately', 'عرض منفصل')}</th>
-                      <th className="py-2.5 px-2 text-center">{t('Show Line', 'عرض البند')}</th>
-                      <th className="py-2.5 px-2 text-center">{t('Main Quantity', 'الكمية الرئيسية')}</th>
-                      <th className="py-2.5 px-3 text-start">{t('Partner Number Type', 'رمز الشريك')}</th>
-                      <th className="py-2.5 px-3 text-start">{t('Product SubType', 'النوع الفرعي')}</th>
-                      <th className="py-2.5 px-3 text-start">{t('Product', 'المنتج')}</th>
-                      <th className="py-2.5 px-4 text-start">{t('Description', 'الوصف')}</th>
-                      <th className="py-2.5 px-3 text-start">{t('Account', 'الحساب')}</th>
-                      <th className="py-2.5 px-3 text-start">{t('Analytic Account', 'الحساب التحليلي')}</th>
-                      <th className="py-2.5 px-2 text-end">{t('Main Qty', 'الكمية')}</th>
-                      <th className="py-2.5 px-2 text-end">{t('Quantity', 'الكمية')}</th>
-                      <th className="py-2.5 px-2 text-start">{t('Unit of Measure', 'الوحدة')}</th>
-                      <th className="py-2.5 px-3 text-end">{t('Price', 'السعر')}</th>
-                      <th className="py-2.5 px-3 text-center">{t('Taxes', 'الضريبة')}</th>
-                      <th className="py-2.5 px-2 text-end">{t('Discount', 'الخصم')}</th>
-                      <th className="py-2.5 px-2 text-center">{t('Rounding Required', 'التقريب')}</th>
-                      <th className="py-2.5 px-4 text-end">{t('Subtotal', 'المجموع')}</th>
-                      {isEditing && <th className="py-2.5 px-2 text-center"></th>}
+                      <th className="py-2 px-3 text-start">{t('Main Task', 'المهمة')}</th>
+                      <th className="py-2 px-3 text-start">{t('Category', 'الفئة')}</th>
+                      <th className="py-2 px-2 text-center">{t('Show Separately', 'عرض منفصل')}</th>
+                      <th className="py-2 px-2 text-center">{t('Show Line', 'عرض البند')}</th>
+                      <th className="py-2 px-2 text-center">{t('Main Quantity', 'الكمية')}</th>
+                      <th className="py-2 px-3 text-start">{t('Partner Number Type', 'رمز الشريك')}</th>
+                      <th className="py-2 px-3 text-start">{t('Product SubType', 'النوع الفرعي')}</th>
+                      <th className="py-2 px-3 text-start">{t('Product', 'المنتج')}</th>
+                      <th className="py-2 px-4 text-start">{t('Product Description', 'الوصف')}</th>
+                      <th className="py-2 px-3 text-start">{t('Account', 'الحساب')}</th>
+                      <th className="py-2 px-3 text-start">{t('Analytic Account', 'الحساب التحليلي')}</th>
+                      <th className="py-2 px-2 text-end">{t('Main Qty', 'الكمية الرئيسية')}</th>
+                      <th className="py-2 px-2 text-end">{t('Quantity', 'الكمية')}</th>
+                      <th className="py-2 px-2 text-start">{t('Unit of Measure', 'الوحدة')}</th>
+                      <th className="py-2 px-3 text-end">{t('Price', 'السعر')}</th>
+                      <th className="py-2 px-3 text-center">{t('Taxes', 'الضريبة')}</th>
+                      <th className="py-2 px-2 text-end">{t('Discount', 'الخصم')}</th>
+                      <th className="py-2 px-4 text-end">{t('Subtotal', 'المجموع')}</th>
+                      {isEditing && <th className="py-2 px-2 text-center w-8"></th>}
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-200">
-                    {lines.map((l) => {
-                      const linePrice = Number(l.price) || 0;
-                      const lineQty = Number(l.qty) || 1;
-                      const lineSubtotal = linePrice * lineQty;
+                  {lines.length > 0 && (
+                    <tbody className="divide-y divide-slate-200">
+                      {lines.map((l) => {
+                        const linePrice = Number(l.price) || 0;
+                        const lineQty = Number(l.qty) || 1;
+                        const lineSubtotal = linePrice * lineQty;
 
-                      return (
-                        <tr key={l.id} className="hover:bg-blue-50/20 transition">
-                          <td className="py-2 px-3 text-slate-700">{l.task || 'Subscription'}</td>
-                          <td className="py-2 px-3 text-slate-700">{l.category || 'Subscription'}</td>
-                          <td className="py-2 px-2 text-center">
-                            <input type="checkbox" className="rounded border-slate-300 w-3.5 h-3.5" />
-                          </td>
-                          <td className="py-2 px-2 text-center">
-                            <input type="checkbox" className="rounded border-slate-300 w-3.5 h-3.5" />
-                          </td>
-                          <td className="py-2 px-2 text-center">
-                            <input type="checkbox" className="rounded border-slate-300 w-3.5 h-3.5" />
-                          </td>
-                          <td className="py-2 px-3 font-semibold text-slate-800">{l.partnerType || 'FAY'}</td>
-                          <td className="py-2 px-3 text-slate-700 max-w-[140px] truncate">
-                            {l.subType || l.descEn || 'Annual Service Subscription - 1 Year'}
-                          </td>
-                          <td className="py-2 px-3 text-slate-700 max-w-[140px] truncate">
-                            {l.product || l.descEn || 'Annual Service Subscription - 1 Year'}
-                          </td>
-                          <td className="py-2 px-4 text-slate-900 font-medium">
-                            {isEditing ? (
-                              <input
-                                type="text"
-                                value={l.descEn}
-                                onChange={(e) => handleLineChange(l.id, 'descEn', e.target.value)}
-                                className="border border-slate-300 rounded px-2 py-0.5 text-xs w-48"
-                              />
-                            ) : (
-                              l.descEn || 'Annual Service Subscription (Renewal)'
-                            )}
-                          </td>
-                          <td className="py-2 px-3 font-mono text-slate-700">
-                            {l.account || '479104 Revenue (Renewal)'}
-                          </td>
-                          <td className="py-2 px-3 font-mono text-blue-700">
-                            {l.analytic || 'CC-101 Workshop Ops'}
-                          </td>
-                          <td className="py-2 px-2 text-end font-mono text-slate-500">
-                            {Number(l.mainQty || 0).toFixed(2)}
-                          </td>
-                          <td className="py-2 px-2 text-end font-mono font-bold text-slate-900">
-                            {isEditing ? (
-                              <input
-                                type="number"
-                                value={l.qty}
-                                onChange={(e) => handleLineChange(l.id, 'qty', e.target.value)}
-                                className="border border-slate-300 rounded px-1 py-0.5 text-xs w-14 text-end"
-                              />
-                            ) : (
-                              Number(lineQty).toFixed(3)
-                            )}
-                          </td>
-                          <td className="py-2 px-2 text-slate-600">{l.uom || 'Units'}</td>
-                          <td className="py-2 px-3 text-end font-mono">
-                            {isEditing ? (
-                              <input
-                                type="number"
-                                value={l.price}
-                                onChange={(e) => handleLineChange(l.id, 'price', e.target.value)}
-                                className="border border-slate-300 rounded px-1 py-0.5 text-xs w-20 text-end"
-                              />
-                            ) : (
-                              linePrice.toFixed(3)
-                            )}
-                          </td>
-                          <td className="py-2 px-3 text-center">
-                            <span className="px-2 py-0.5 rounded-full border border-slate-400 bg-white text-slate-700 text-[10px] font-semibold">
-                              VAT 15%
-                            </span>
-                          </td>
-                          <td className="py-2 px-2 text-end font-mono text-slate-500">
-                            {Number(l.discount || 0).toFixed(3)}
-                          </td>
-                          <td className="py-2 px-2 text-center">
-                            <input type="checkbox" className="rounded border-slate-300 w-3.5 h-3.5" />
-                          </td>
-                          <td className="py-2 px-4 text-end font-mono font-bold text-slate-900">
-                            <div className="flex items-center justify-end gap-1.5">
-                              <span>{lineSubtotal.toLocaleString('en-US', { minimumFractionDigits: 2 })} SR</span>
-                              <FileText className="w-3.5 h-3.5 text-slate-500 inline cursor-pointer hover:text-[#0e7490]" title="Tax & Analytical Breakdown" />
-                            </div>
-                          </td>
-                          {isEditing && (
-                            <td className="py-2 px-2 text-center">
-                              <button
-                                onClick={() => handleRemoveLine(l.id)}
-                                className="text-slate-400 hover:text-rose-600 p-1"
-                              >
-                                <Trash2 className="w-3 h-3" />
-                              </button>
+                        return (
+                          <tr key={l.id} className="hover:bg-blue-50/20 transition">
+                            <td className="py-2 px-3 text-slate-700">
+                              {isEditing ? (
+                                <input
+                                  type="text"
+                                  value={l.task || ''}
+                                  onChange={(e) => handleLineChange(l.id, 'task', e.target.value)}
+                                  placeholder=""
+                                  className="border border-slate-300 rounded px-1.5 py-0.5 text-xs w-24"
+                                />
+                              ) : (
+                                l.task || '-'
+                              )}
                             </td>
-                          )}
-                        </tr>
-                      );
-                    })}
-                  </tbody>
+                            <td className="py-2 px-3 text-slate-700">
+                              {isEditing ? (
+                                <input
+                                  type="text"
+                                  value={l.category || ''}
+                                  onChange={(e) => handleLineChange(l.id, 'category', e.target.value)}
+                                  placeholder=""
+                                  className="border border-slate-300 rounded px-1.5 py-0.5 text-xs w-24"
+                                />
+                              ) : (
+                                l.category || '-'
+                              )}
+                            </td>
+                            <td className="py-2 px-2 text-center">
+                              <input
+                                type="checkbox"
+                                checked={l.showSeparately || false}
+                                onChange={(e) => isEditing && handleLineChange(l.id, 'showSeparately', e.target.checked)}
+                                disabled={!isEditing}
+                                className="rounded border-slate-300 w-3.5 h-3.5 text-[#0e7490]"
+                              />
+                            </td>
+                            <td className="py-2 px-2 text-center">
+                              <input
+                                type="checkbox"
+                                checked={l.showLine || false}
+                                onChange={(e) => isEditing && handleLineChange(l.id, 'showLine', e.target.checked)}
+                                disabled={!isEditing}
+                                className="rounded border-slate-300 w-3.5 h-3.5 text-[#0e7490]"
+                              />
+                            </td>
+                            <td className="py-2 px-2 text-center">
+                              <input
+                                type="checkbox"
+                                checked={l.mainQuantityCheck || false}
+                                onChange={(e) => isEditing && handleLineChange(l.id, 'mainQuantityCheck', e.target.checked)}
+                                disabled={!isEditing}
+                                className="rounded border-slate-300 w-3.5 h-3.5 text-[#0e7490]"
+                              />
+                            </td>
+                            <td className="py-2 px-3 font-semibold text-slate-800">
+                              {isEditing ? (
+                                <input
+                                  type="text"
+                                  value={l.partnerType || ''}
+                                  onChange={(e) => handleLineChange(l.id, 'partnerType', e.target.value)}
+                                  placeholder=""
+                                  className="border border-slate-300 rounded px-1.5 py-0.5 text-xs w-20"
+                                />
+                              ) : (
+                                l.partnerType || '-'
+                              )}
+                            </td>
+                            <td className="py-2 px-3 text-slate-700 max-w-[140px] truncate">
+                              {isEditing ? (
+                                <input
+                                  type="text"
+                                  value={l.subType || ''}
+                                  onChange={(e) => handleLineChange(l.id, 'subType', e.target.value)}
+                                  placeholder=""
+                                  className="border border-slate-300 rounded px-1.5 py-0.5 text-xs w-28"
+                                />
+                              ) : (
+                                l.subType || '-'
+                              )}
+                            </td>
+                            <td className="py-2 px-3 text-slate-700 max-w-[140px] truncate">
+                              {isEditing ? (
+                                <input
+                                  type="text"
+                                  value={l.product || ''}
+                                  onChange={(e) => handleLineChange(l.id, 'product', e.target.value)}
+                                  placeholder=""
+                                  className="border border-slate-300 rounded px-1.5 py-0.5 text-xs w-28"
+                                />
+                              ) : (
+                                l.product || '-'
+                              )}
+                            </td>
+                            <td className="py-2 px-4 text-slate-900 font-medium">
+                              {isEditing ? (
+                                <input
+                                  type="text"
+                                  value={l.descEn || ''}
+                                  onChange={(e) => handleLineChange(l.id, 'descEn', e.target.value)}
+                                  placeholder=""
+                                  className="border border-slate-300 rounded px-2 py-0.5 text-xs w-48"
+                                />
+                              ) : (
+                                l.descEn || '-'
+                              )}
+                            </td>
+                            <td className="py-2 px-3 font-mono text-slate-700">
+                              {l.account || '479104 Revenue'}
+                            </td>
+                            <td className="py-2 px-3 font-mono text-blue-700">
+                              {l.analytic || 'CC-101 Workshop Ops'}
+                            </td>
+                            <td className="py-2 px-2 text-end font-mono text-slate-500">
+                              {Number(l.mainQty || 0).toFixed(2)}
+                            </td>
+                            <td className="py-2 px-2 text-end font-mono font-bold text-slate-900">
+                              {isEditing ? (
+                                <input
+                                  type="number"
+                                  min="0"
+                                  step="1"
+                                  value={l.qty}
+                                  onChange={(e) => handleLineChange(l.id, 'qty', e.target.value)}
+                                  className="border border-slate-300 rounded px-1 py-0.5 text-xs w-14 text-end"
+                                />
+                              ) : (
+                                Number(lineQty).toFixed(3)
+                              )}
+                            </td>
+                            <td className="py-2 px-2 text-slate-600">{l.uom || 'Units'}</td>
+                            <td className="py-2 px-3 text-end font-mono">
+                              {isEditing ? (
+                                <input
+                                  type="number"
+                                  min="0"
+                                  step="0.01"
+                                  value={l.price}
+                                  onChange={(e) => handleLineChange(l.id, 'price', e.target.value)}
+                                  className="border border-slate-300 rounded px-1 py-0.5 text-xs w-20 text-end"
+                                />
+                              ) : (
+                                linePrice.toFixed(3)
+                              )}
+                            </td>
+                            <td className="py-2 px-3 text-center">
+                              <span className="px-2 py-0.5 rounded-full border border-slate-400 bg-white text-slate-700 text-[10px] font-semibold">
+                                VAT 15%
+                              </span>
+                            </td>
+                            <td className="py-2 px-2 text-end font-mono text-slate-500">
+                              {isEditing ? (
+                                <input
+                                  type="number"
+                                  min="0"
+                                  value={l.discount || 0}
+                                  onChange={(e) => handleLineChange(l.id, 'discount', e.target.value)}
+                                  className="border border-slate-300 rounded px-1 py-0.5 text-xs w-12 text-end"
+                                />
+                              ) : (
+                                Number(l.discount || 0).toFixed(3)
+                              )}
+                            </td>
+                            <td className="py-2 px-4 text-end font-mono font-bold text-slate-900">
+                              <span>{lineSubtotal.toLocaleString('en-US', { minimumFractionDigits: 2 })} SR</span>
+                            </td>
+                            {isEditing && (
+                              <td className="py-2 px-2 text-center">
+                                <button
+                                  type="button"
+                                  onClick={() => handleRemoveLine(l.id)}
+                                  className="text-slate-400 hover:text-rose-600 p-1 cursor-pointer"
+                                  title="Delete line"
+                                >
+                                  <Trash2 className="w-3.5 h-3.5" />
+                                </button>
+                              </td>
+                            )}
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  )}
                 </table>
+
+                {/* Sub-table actions: Add a line / Add a section / Add a note */}
+                <div className="py-2.5 px-4 bg-white border-t border-slate-200 space-y-2">
+                  <div className="flex items-center gap-4 text-xs font-semibold text-[#0e7490]">
+                    <button
+                      type="button"
+                      onClick={handleAddLine}
+                      className="hover:underline flex items-center gap-1 text-[#0e7490] cursor-pointer"
+                    >
+                      <span>{t('Add a line', 'إضافة بند')}</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleAddLine}
+                      className="hover:underline text-slate-600 cursor-pointer"
+                    >
+                      {t('Add a section', 'إضافة قسم')}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleAddLine}
+                      className="hover:underline text-slate-600 cursor-pointer"
+                    >
+                      {t('Add a note', 'إضافة ملاحظة')}
+                    </button>
+                  </div>
+
+                  {/* Shaded empty placeholder bars matching exact Odoo screenshot */}
+                  {lines.length === 0 && (
+                    <div className="space-y-1.5 pt-1">
+                      <div className="h-6 w-full bg-[#f1f5f9] rounded-xs border border-slate-100" />
+                      <div className="h-6 w-full bg-[#f1f5f9] rounded-xs border border-slate-100" />
+                    </div>
+                  )}
+                </div>
               </div>
 
-              {/* Add an item links (Odoo section & note links) */}
-              {isEditing && (
-                <div className="flex items-center gap-4 text-xs font-semibold text-[#0e7490] pt-1">
-                  <button
-                    onClick={handleAddLine}
-                    className="hover:underline flex items-center gap-1"
-                  >
-                    <Plus className="w-3.5 h-3.5" />
-                    <span>{t('Add a line', 'إضافة بند')}</span>
-                  </button>
-                  <button
-                    onClick={handleAddLine}
-                    className="hover:underline text-slate-600"
-                  >
-                    {t('Add a section', 'إضافة قسم')}
-                  </button>
-                  <button
-                    onClick={handleAddLine}
-                    className="hover:underline text-slate-600"
-                  >
-                    {t('Add a note', 'إضافة ملاحظة')}
-                  </button>
-                </div>
-              )}
-
-              {/* Bottom Financial Summary Table (Odoo 12/14/16 Native Border Style) */}
-              <div className="flex justify-end pt-4">
-                <div className="w-72 space-y-1.5 text-xs text-end">
+              {/* Bottom Financial Summary Table */}
+              <div className="flex justify-end pt-2">
+                <div className="w-72 space-y-1 text-xs text-end">
                   <div className="flex justify-between py-1 border-b border-slate-200 text-slate-700">
                     <span>{t('Untaxed Amount:', 'المبلغ بدون ضريبة:')}</span>
                     <span className="font-mono font-semibold text-slate-900">
@@ -958,12 +1233,6 @@ export default function InvoiceFormView({
                       {grandTotal.toLocaleString('en-US', { minimumFractionDigits: 2 })} SR
                     </span>
                   </div>
-                  <div className="flex justify-between py-1 border-t border-dashed border-slate-300 text-xs font-bold text-slate-700">
-                    <span>{t('Amount Due:', 'المبلغ المستحق:')}</span>
-                    <span className="font-mono">
-                      {(formData.status === 'Paid' ? 0 : grandTotal).toLocaleString('en-US', { minimumFractionDigits: 2 })} SR
-                    </span>
-                  </div>
                 </div>
               </div>
             </div>
@@ -978,7 +1247,9 @@ export default function InvoiceFormView({
                 </h3>
                 <div className="flex justify-between py-1">
                   <span className="text-slate-500">{t('Journal:', 'دفتر اليومية:')}</span>
-                  <strong>Customer Invoices (SAR)</strong>
+                  <strong>
+                    {formData.invoiceSubtype === 'cash' ? 'Cash Invoices (SAR)' : 'Customer Invoices (SAR)'}
+                  </strong>
                 </div>
                 <div className="flex justify-between py-1">
                   <span className="text-slate-500">{t('Company Bank Account:', 'الحساب البنكي:')}</span>
@@ -996,16 +1267,16 @@ export default function InvoiceFormView({
                 </h3>
                 <div className="flex justify-between py-1">
                   <span className="text-slate-500">{t('ZATCA Status:', 'حالة الاعتماد:')}</span>
-                  <span className="font-bold text-emerald-700">{formData.zatcaStatus || 'CLEARED (QR)'}</span>
+                  <span className="font-bold text-emerald-700">{formData.zatcaStatus || 'DRAFT (Phase 2)'}</span>
                 </div>
                 <div className="flex justify-between py-1">
                   <span className="text-slate-500">{t('Force Date (stock_force_date):', 'تاريخ القيد الإجباري:')}</span>
-                  <span className="font-mono text-blue-800">{formData.forceDate || '2026-10-30'}</span>
+                  <span className="font-mono text-blue-800">{formData.forceDate || '-'}</span>
                 </div>
                 <div className="flex justify-between py-1">
                   <span className="text-slate-500">{t('UUID:', 'المعرف الفريد:')}</span>
                   <span className="font-mono text-[10px] text-slate-600 truncate max-w-[220px]">
-                    8f94b2c0-7d1e-4b3a-9c5f-12894a6b7e01
+                    {isNewInvoice ? 'Pending generation upon Validate' : '8f94b2c0-7d1e-4b3a-9c5f-12894a6b7e01'}
                   </span>
                 </div>
               </div>

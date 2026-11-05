@@ -9,24 +9,28 @@ import {
   PanelLeftOpen, Settings, Bell, MessageSquare, Upload, MoreVertical,
   List, LayoutGrid, BarChart3, Table2, Star, ShoppingCart, Edit3,
   Phone, Mail, Smartphone, User, LogOut, Keyboard, CheckSquare, Square,
-  Wrench, Repeat, Headphones, Save
+  Wrench, Repeat, Headphones, Save, LayoutDashboard, Sparkles
 } from 'lucide-react';
 import AccountingSettingsView from './components/AccountingSettingsView.jsx';
 import InvoiceCreateModal from './components/InvoiceCreateModal.jsx';
 import PaymentCreateModal from './components/PaymentCreateModal.jsx';
 import InvoiceFormView from './components/InvoiceFormView.jsx';
+import VendorBillsView, { INITIAL_VENDOR_BILLS } from './components/VendorBillsView.jsx';
+import FinancialReportsView from './components/FinancialReportsView.jsx';
+import JournalEntryCreateModal from './components/JournalEntryCreateModal.jsx';
+import PartnerCreateModal from './components/PartnerCreateModal.jsx';
 
-// --- SAUDI GROUP COMPANIES (1 PARENT HQ + 5 OPERATING COMPANIES) ---
+// --- SAUDI GROUP COMPANIES (6 OPERATING ENTITIES FROM YAMAMA LIVE DATABASE) ---
 const COMPANIES = [
-  { id: 'HYD', code: 'AYH', nameEn: 'Al Yamama Hydraulic Workshop Co.', nameAr: 'شركة ورشة اليمامة للهيدروليك', cityEn: 'Riyadh', vat: '300023456700003', isParent: false },
-  { id: 'PARENT', code: 'FAY', nameEn: 'Flames of Al Yamama Trading Co. (HQ)', nameAr: 'شركة شعلة اليمامة للتجارة (المركز الرئيسي)', cityEn: 'Riyadh HQ', vat: '300012345600003', isParent: true },
-  { id: 'HVY', code: 'AYE', nameEn: 'Al Yamama Heavy Equipment Co.', nameAr: 'شركة اليمامة للمعدات الثقيلة', cityEn: 'Dammam', vat: '300034567800003', isParent: false },
-  { id: 'IND', code: 'AYS', nameEn: 'Al Yamama Industrial Spare Parts Co.', nameAr: 'شركة اليمامة لقطع الغيار الصناعية', cityEn: 'Jeddah', vat: '300045678900003', isParent: false },
-  { id: 'LOG', code: 'AYL', nameEn: 'Al Yamama Logistics & Fleet Co.', nameAr: 'شركة اليمامة للخدمات اللوجستية والأسطول', cityEn: 'Jubail', vat: '300056789000003', isParent: false },
-  { id: 'INS', code: 'AYI', nameEn: 'Al Yamama Contracting & Installation Co.', nameAr: 'شركة اليمامة للمقاولات والتركيبات', cityEn: 'Neom / Tabuk', vat: '300067890100003', isParent: false },
+  { id: 'HYD', code: 'AYH', nameEn: 'Flames of Al-Yamama Hydraulic Co', nameAr: 'شركة شعلة اليمامة للهيدروليك', cityEn: 'Riyadh Workshop', vat: '310436125600003', isParent: false },
+  { id: 'PARENT', code: 'FAY', nameEn: 'Flames of Al Yamama Trading Co (HQ)', nameAr: 'شركة شعلة اليمامة للتجارة (المركز الرئيسي)', cityEn: 'Riyadh HQ', vat: '310436125600003', isParent: true },
+  { id: 'LOG', code: 'AYL', nameEn: 'Al Yamama Advanced Logistics Services Co', nameAr: 'شركة اليمامة للخدمات اللوجستية المتقدمة', cityEn: 'Jubail', vat: '310436125600003', isParent: false },
+  { id: 'AGR', code: 'AYA', nameEn: 'Flames of Al Yamama Agriculture Co', nameAr: 'شركة شعلة اليمامة للزراعة', cityEn: 'Al-Kharj', vat: '310436125600003', isParent: false },
+  { id: 'TEAM', code: 'TYM', nameEn: 'Team Yamama', nameAr: 'فريق اليمامة', cityEn: 'Riyadh Operations', vat: '310436125600003', isParent: false },
+  { id: 'CORP', code: 'CORP', nameEn: 'Corporate', nameAr: 'الإدارة العامة والشركات', cityEn: 'Riyadh', vat: '310436125600003', isParent: false },
 ];
 
-// --- CLEAN LEFT SIDEBAR MAIN ERP MODULES (STRICTLY ICON + NAME ONLY) ---
+// --- MAIN ERP MODULES (SIDEBAR: ACCOUNTING, SALES, PURCHASE, INVENTORY, SUBSCRIPTIONS, HELPDESK) ---
 const ERP_MODULES = [
   { id: 'accounting', nameEn: 'Accounting', nameAr: 'المحاسبة', icon: Calculator, targetView: 'dashboard' },
   { id: 'sales', nameEn: 'Sales', nameAr: 'المبيعات', icon: ShoppingCart, targetView: 'module_overview' },
@@ -425,6 +429,9 @@ export default function App() {
 
   // Invoices & Selected Record Modal State
   const [invoices, setInvoices] = useState(INITIAL_INVOICES);
+  const [vendorBills, setVendorBills] = useState(INITIAL_VENDOR_BILLS);
+  const [journalEntries, setJournalEntries] = useState(JOURNAL_ENTRIES_LIST);
+  const [partnersDirectory, setPartnersDirectory] = useState(VENDORS_DIRECTORY);
   const [selectedInvoice, setSelectedInvoice] = useState(null);
   const [printPreviewMode, setPrintPreviewMode] = useState(null); // null | 'proforma' | 'zatca'
   const [selectedJeRecord, setSelectedJeRecord] = useState(null);
@@ -433,12 +440,16 @@ export default function App() {
   const [invoiceCreateOpen, setInvoiceCreateOpen] = useState(false);
   const [invoiceCreateType, setInvoiceCreateType] = useState('customer'); // 'customer' | 'vendor'
   const [paymentCreateOpen, setPaymentCreateOpen] = useState(false);
+  const [journalEntryCreateOpen, setJournalEntryCreateOpen] = useState(false);
+  const [partnerCreateOpen, setPartnerCreateOpen] = useState(false);
+  const [partnerCreateType, setPartnerCreateType] = useState('vendor');
   const [paymentCreateDefaults, setPaymentCreateDefaults] = useState({
     type: 'receive',
     partner: '',
     amount: 25000,
     memo: '',
     invoiceId: null,
+    billId: null,
   });
 
   const INITIAL_PAYMENTS = [
@@ -532,68 +543,76 @@ export default function App() {
 
   // Create New Invoice draft in Odoo Form View
   const handleCreateNewInvoice = (subtype = 'cash') => {
+    const now = new Date();
+    const day = String(now.getDate()).padStart(2, '0');
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const year = now.getFullYear();
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    const seconds = String(now.getSeconds()).padStart(2, '0');
+
+    const formattedDate = `${day}/${month}/${year}`;
+    const formattedDateTime = `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
+    const formattedIso = `${year}-${month}-${day}`;
+
     const newInv = {
       id: `INV-${Date.now()}`,
       number: 'Draft Invoice',
+      isNew: true,
       proformaRef: '',
-      customerEn: '44 Supermarket',
-      customerAr: 'سوبرماركت 44',
-      vatNo: '300112233400003',
-      invoiceDate: '06/03/2026',
-      invoiceDateTime: '06/03/2026 12:46:33',
-      forceDate: '2026-03-06',
-      dueDateText: '06/03/2026',
+      customerEn: '',
+      customerAr: '',
+      vatNo: '',
+      invoiceDate: formattedDate,
+      invoiceDateTime: formattedDateTime,
+      forceDate: formattedIso,
+      dueDateText: '',
       dueDateType: 'normal',
-      taxExcluded: 975.00,
-      total: 1121.25,
-      amountDue: 1121.25,
+      taxExcluded: 0.0,
+      total: 0.0,
+      amountDue: 0.0,
       currency: 'SAR',
       zatcaStatus: 'DRAFT (Phase 2)',
       status: 'Draft',
       type: 'customer',
       invoiceSubtype: subtype,
-      subtypeLabelEn: subtype === 'cash' ? 'Cash Invoice' : 'Credit Invoice',
-      subtypeLabelAr: subtype === 'cash' ? 'فاتورة نقدية' : 'فاتورة آجل',
-      companyId: 'HYD',
-      companyName: 'Al Yamama Hydraulic Workshop Co.',
-      isSubscription: subtype === 'cash',
+      subtypeLabelEn:
+        subtype === 'cash'
+          ? 'Cash Invoice'
+          : subtype === 'credit'
+          ? 'Credit Invoice'
+          : subtype === 'proforma'
+          ? 'Proforma Invoice'
+          : subtype === 'progressive'
+          ? 'Progressive Invoice'
+          : 'Customer Invoice',
+      subtypeLabelAr:
+        subtype === 'cash'
+          ? 'فاتورة نقدية'
+          : subtype === 'credit'
+          ? 'فاتورة آجل'
+          : subtype === 'proforma'
+          ? 'فاتورة مبدئية'
+          : subtype === 'progressive'
+          ? 'فاتورة إنجاز'
+          : 'فاتورة عملاء',
+      companyId: primaryCompanyId || 'HYD',
+      companyName: activeCompanyObj?.nameEn || 'Flames of Al-Yamama Hydraulic Co',
+      isSubscription: false,
       project: '',
       contactPerson: '',
-      paymentTerms: subtype === 'cash' ? 'Immediate Payment' : '30 Days',
+      paymentTerms: '',
       showDiscount: false,
       vendorProjectName: '',
       prNumber: '',
       poNumber: '',
-      salesperson: 'Adithya PL',
+      salesperson: 'Administrator',
       equipmentDetails: '',
       groupTask: 'No Grouping',
       companySeal: true,
       showOutStock: false,
       salesTeam: 'Sales',
-      lines: [
-        {
-          id: Date.now(),
-          task: 'Subscription',
-          category: 'Subscription',
-          showSeparately: false,
-          showLine: false,
-          mainQuantityCheck: false,
-          partnerType: 'FAY',
-          subType: 'Annual Service Subscription - 1 Year',
-          product: 'Annual Service Subscription - 1 Year',
-          descEn: 'Annual Service Subscription (Renewal)',
-          descAr: 'اشتراك صيانة سنوي (تجديد)',
-          account: '479104 Revenue (Renewal)',
-          analytic: 'CC-101 Workshop Ops',
-          mainQty: 0.0,
-          qty: 3,
-          uom: 'Units',
-          price: 325,
-          tax: 15,
-          discount: 0.0,
-          roundingRequired: false,
-        }
-      ]
+      lines: [], // Completely empty
     };
     setSelectedInvoice(newInv);
     setInvoiceCreateOpen(false);
@@ -966,6 +985,7 @@ export default function App() {
       setActiveModule(mod.id);
       if (mod.id === 'accounting') {
         setActiveView('dashboard');
+        setSelectedInvoice(null);
       } else {
         setActiveView('module_overview');
       }
@@ -980,6 +1000,7 @@ export default function App() {
               onClick={() => {
                 setActiveModule('accounting');
                 setActiveView('dashboard');
+                setSelectedInvoice(null);
               }}
               className="flex items-center gap-2.5 cursor-pointer"
             >
@@ -1110,8 +1131,8 @@ export default function App() {
               )}
               <div
                 onClick={() => {
-                  setActiveModule('accounting');
                   setActiveView('dashboard');
+                  setSelectedInvoice(null);
                 }}
                 className="flex items-center gap-2.5 cursor-pointer"
               >
@@ -1166,6 +1187,7 @@ export default function App() {
                                     if (group.view) {
                                       setActiveModule('accounting');
                                       setActiveView(group.view);
+                                      setSelectedInvoice(null);
                                       if (group.chip) setActiveChips([group.chip]);
                                       if (group.report) setSelectedReportName(group.report);
                                       setOpenTopDropdown(null);
@@ -1185,6 +1207,7 @@ export default function App() {
                                       onClick={() => {
                                         setActiveModule('accounting');
                                         setActiveView(sub.view);
+                                        setSelectedInvoice(null);
                                         if (sub.chip) setActiveChips([sub.chip]);
                                         if (sub.report) setSelectedReportName(sub.report);
                                         setOpenTopDropdown(null);
@@ -1367,7 +1390,12 @@ export default function App() {
                           setInvoiceCreateOpen(true);
                         } else if (activeView === 'invoices') {
                           const isCash = activeChips.includes('Cash Invoices');
-                          handleCreateNewInvoice(isCash ? 'cash' : 'credit');
+                          const isCredit = activeChips.includes('Credit Invoices');
+                          const isProforma = activeChips.includes('Proforma Only') || activeChips.includes('Proforma Invoices');
+                          const isProgressive = activeChips.includes('Progressive Invoices');
+                          const isRefund = activeChips.includes('Credit Notes');
+                          const subtype = isCash ? 'cash' : isCredit ? 'credit' : isProforma ? 'proforma' : isProgressive ? 'progressive' : isRefund ? 'refund' : 'cash';
+                          handleCreateNewInvoice(subtype);
                         } else if (activeView === 'payments' || activeView === 'reconcile') {
                           const isVendorPay = activeChips.includes('Vendor Payments');
                           setPaymentCreateDefaults({
@@ -1376,8 +1404,14 @@ export default function App() {
                             amount: 25000,
                             memo: '',
                             invoiceId: null,
+                            billId: null,
                           });
                           setPaymentCreateOpen(true);
+                        } else if (activeView === 'journal_entries') {
+                          setJournalEntryCreateOpen(true);
+                        } else if (activeView === 'vendors') {
+                          setPartnerCreateType(activeChips.includes('Customers') ? 'customer' : 'vendor');
+                          setPartnerCreateOpen(true);
                         } else {
                           handleCreateNewInvoice('cash');
                         }
@@ -1888,6 +1922,7 @@ export default function App() {
                     const target = MODULE_SUMMARIES[activeModule].targetAccountingView;
                     setActiveModule('accounting');
                     setActiveView(target);
+                    setSelectedInvoice(null);
                   }}
                   className="px-4 py-2 rounded-lg bg-blue-700 hover:bg-blue-800 text-white text-xs font-semibold shadow-2xs flex items-center gap-2 transition"
                 >
@@ -2133,7 +2168,7 @@ export default function App() {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100">
-                      {JOURNAL_ENTRIES_LIST.map((je) => (
+                      {journalEntries.map((je) => (
                         <tr
                           key={je.id}
                           onClick={() => setSelectedJeRecord(je)}
@@ -2244,7 +2279,7 @@ export default function App() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100">
-                    {VENDORS_DIRECTORY.map((v) => (
+                    {partnersDirectory.map((v) => (
                       <tr key={v.id} className="hover:bg-blue-50/40 cursor-pointer transition">
                         <td className="py-3 px-4">
                           <input type="checkbox" className="rounded border-slate-300" />
@@ -2288,12 +2323,50 @@ export default function App() {
           )}
 
           {/* ===============================================================
-              VIEW E: VENDOR BILLS, LANDED COSTS, RECONCILE, REPORTS & CONFIG
+              VIEW E1: DEDICATED VENDOR BILLS (3-TIER APPROVALS & IC MIRRORING)
              =============================================================== */}
-          {(activeView === 'bills' ||
-            activeView === 'landed_costs' ||
+          {activeView === 'bills' && (
+            <VendorBillsView
+              t={t}
+              isRtl={isRtl}
+              activeCompany={activeCompanyObj}
+              bills={vendorBills}
+              onUpdateBills={setVendorBills}
+              onCreateNewBill={() => {
+                setInvoiceCreateType('vendor');
+                setInvoiceCreateOpen(true);
+              }}
+              onRegisterPayment={(payDefaults) => {
+                setPaymentCreateDefaults({
+                  type: payDefaults.type || 'send',
+                  partner: payDefaults.partner,
+                  amount: payDefaults.amount,
+                  memo: payDefaults.memo,
+                  invoiceId: null,
+                  billId: payDefaults.billId || null,
+                });
+                setPaymentCreateOpen(true);
+              }}
+            />
+          )}
+
+          {/* ===============================================================
+              VIEW E2: DEDICATED FINANCIAL REPORTS (P&L, BALANCE SHEET, VAT 15%)
+             =============================================================== */}
+          {activeView === 'reports' && (
+            <FinancialReportsView
+              t={t}
+              isRtl={isRtl}
+              activeCompany={activeCompanyObj}
+              companies={COMPANIES}
+            />
+          )}
+
+          {/* ===============================================================
+              VIEW E3: SPECIALIZED ACCOUNTING CONFIG & DRILLDOWNS
+             =============================================================== */}
+          {(activeView === 'landed_costs' ||
             activeView === 'reconcile' ||
-            activeView === 'reports' ||
             activeView === 'product_categories' ||
             activeView === 'lock_dates') && (
             <div className="bg-white rounded-xl border border-slate-200 p-5 shadow-2xs space-y-4">
@@ -2303,10 +2376,8 @@ export default function App() {
                     {t('Active Company:', 'الشركة النشطة:')} {t(activeCompanyObj.nameEn, activeCompanyObj.nameAr)}
                   </span>
                   <h2 className="text-base font-extrabold text-slate-900">
-                    {activeView === 'bills' && t('Vendor Bills, 3-Tier Approvals & Automatic Inter-Company Mirroring', 'فواتير الموردين، صلاحيات الاعتماد، والربط الآلي للشركات الشقيقة')}
                     {activeView === 'landed_costs' && t('Landed Costs (Customs/Freight on Stock Transfers) & Fixed Assets', 'التكاليف الإضافية للمخزون (الجمارك والشحن) والأصول الثابتة')}
                     {activeView === 'reconcile' && t('Direct Invoice-to-Payment Reconciliation & Cheque Lifecycle', 'تسوية الفواتير مقابل الدفعات ودورة حياة الشيكات')}
-                    {activeView === 'reports' && `${selectedReportName} — ${t('Interactive Financial Statement', 'التقرير المالي التفاعلي')}`}
                     {activeView === 'product_categories' && t('Inventory-to-Accounting Product Category Accounts & Chart of Accounts', 'حسابات فئات المخزون وشجرة الحسابات')}
                     {activeView === 'lock_dates' && t('Fiscal Year & Period Lock Dates (Hard Lock vs Tax Lock)', 'تواريخ إغلاق الفترات المحاسبية والسنة المالية')}
                   </h2>
@@ -2331,13 +2402,6 @@ export default function App() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100">
-                    <tr>
-                      <td className="py-3 px-4 font-mono font-bold text-blue-800">BILL/2026/0312</td>
-                      <td className="py-3 px-4 font-medium">Al Yamama Logistics & Fleet Co. (Auto Inter-Company Bill)</td>
-                      <td className="py-3 px-4 text-blue-700">Mirrored from INV/2026/00005 • IC Payable 211201</td>
-                      <td className="py-3 px-4 text-end font-bold">15,525.00 SAR</td>
-                      <td className="py-3 px-4 text-center">{renderStatusPill('Posted')}</td>
-                    </tr>
                     <tr>
                       <td className="py-3 px-4 font-mono font-bold text-blue-800">LC/2026/0018</td>
                       <td className="py-3 px-4 font-medium">Saudi Customs & Freight Allocated to Receipt WH/IN/0089</td>
@@ -2709,10 +2773,48 @@ export default function App() {
           setPaymentCreateOpen(true);
         }}
         onSave={(savedInvoice) => {
-          if (selectedInvoice) {
-            setInvoices(invoices.map((inv) => (inv.id === savedInvoice.id ? savedInvoice : inv)));
+          if (invoiceCreateType === 'vendor' || savedInvoice.type === 'vendor') {
+            const newBill = {
+              id: `VB-${Date.now()}`,
+              number: savedInvoice.number.startsWith('BILL') || savedInvoice.number.startsWith('RBILL')
+                ? savedInvoice.number
+                : `BILL/2026/11/${Math.floor(100 + Math.random() * 900)}`,
+              vendorEn: savedInvoice.customerEn,
+              vendorAr: savedInvoice.customerAr || savedInvoice.customerEn,
+              billDate: savedInvoice.invoiceDate || '2026-11-04',
+              dueDate: savedInvoice.dueDateText || '2026-12-04',
+              reference: savedInvoice.proformaRef || `PO-2026-${Math.floor(1000 + Math.random() * 9000)}`,
+              taxExcluded: savedInvoice.taxExcluded || 12500,
+              vatAmount: (savedInvoice.total || 14375) - (savedInvoice.taxExcluded || 12500),
+              total: savedInvoice.total || 14375,
+              amountDue: savedInvoice.amountDue || 14375,
+              currency: 'SAR',
+              status: savedInvoice.status === 'Draft' ? 'Draft' : 'To Approve',
+              isInterCompany: false,
+              companyId: savedInvoice.companyId || 'HYD',
+              companyName: savedInvoice.companyName || 'Flames of Al-Yamama Hydraulic Co',
+              costCenter: 'CC-101 Workshop Ops',
+              lines: (savedInvoice.lines || []).map((l) => ({
+                id: l.id || Date.now(),
+                desc: l.descEn || l.descAr || 'OEM Hydraulic Component',
+                qty: l.qty || 1,
+                unitPrice: l.price || 12500,
+                tax: 15,
+                total: (Number(l.qty || 1) * Number(l.price || 12500)) * 1.15,
+              })),
+              approvers: [
+                { role: 'Warehouse Receiving', user: 'Fahad Al-Harbi', status: 'Pending Verification', date: '-' },
+                { role: 'Procurement Specialist', user: 'Zaid Al-Ghamdi', status: 'Pending Approval', date: '-' },
+                { role: 'Finance Controller', user: 'Tariq Al-Mansoor', status: 'Pending Approval', date: '-' },
+              ]
+            };
+            setVendorBills([newBill, ...vendorBills]);
           } else {
-            setInvoices([savedInvoice, ...invoices]);
+            if (selectedInvoice) {
+              setInvoices(invoices.map((inv) => (inv.id === savedInvoice.id ? savedInvoice : inv)));
+            } else {
+              setInvoices([savedInvoice, ...invoices]);
+            }
           }
           setSelectedInvoice(null);
         }}
@@ -2746,6 +2848,45 @@ export default function App() {
               setSelectedInvoice({ ...selectedInvoice, status: 'Paid', amountDue: 0 });
             }
           }
+          if (paymentCreateDefaults.billId) {
+            setVendorBills((prev) =>
+              prev.map((b) =>
+                b.id === paymentCreateDefaults.billId
+                  ? { ...b, status: 'Paid', amountDue: 0 }
+                  : b
+              )
+            );
+          }
+        }}
+      />
+
+      {/* =====================================================================
+          MODAL 5: JOURNAL ENTRY CREATE FORM (Odoo 12 account.move)
+         ===================================================================== */}
+      <JournalEntryCreateModal
+        isOpen={journalEntryCreateOpen}
+        onClose={() => setJournalEntryCreateOpen(false)}
+        t={t}
+        isRtl={isRtl}
+        companies={COMPANIES}
+        activeCompany={activeCompanyObj}
+        onSave={(newJe) => {
+          setJournalEntries([newJe, ...journalEntries]);
+          setSelectedJeRecord(newJe);
+        }}
+      />
+
+      {/* =====================================================================
+          MODAL 6: PARTNER / RES.PARTNER CREATE FORM (Odoo 12 res.partner)
+         ===================================================================== */}
+      <PartnerCreateModal
+        isOpen={partnerCreateOpen}
+        onClose={() => setPartnerCreateOpen(false)}
+        defaultType={partnerCreateType}
+        t={t}
+        isRtl={isRtl}
+        onSave={(newPartner) => {
+          setPartnersDirectory([newPartner, ...partnersDirectory]);
         }}
       />
     </div>
